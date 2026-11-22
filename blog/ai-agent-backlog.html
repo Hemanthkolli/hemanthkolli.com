@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Connect Jira and Confluence to your AI assistant · Hemanth Kolli</title>
+  <meta name="description" content="A step-by-step guide for Product Owners and PMs: create Jira and Confluence tokens, run a local MCP server without admin rights on Linux, macOS or Windows, connect GitHub Copilot or other IDEs, and keep company data safe.">
+  <link rel="canonical" href="https://hemanthkolli.com/blog/ai-agent-backlog.html">
+  <meta property="og:url" content="https://hemanthkolli.com/blog/ai-agent-backlog.html">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230b0f14'/><text x='5' y='23' font-family='monospace' font-size='18' fill='%234ade80'>&gt;_</text></svg>">
+  <script>try{var t=localStorage.getItem("theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <nav class="nav container" aria-label="Main">
+      <a class="logo" href="../"><span class="prompt">~/</span>hemanth</a>
+      <div class="nav-right">
+        <ul class="nav-links">
+          <li><a href="../#about">about</a></li>
+          <li><a href="../#experience">experience</a></li>
+          <li><a href="../#projects">projects</a></li>
+          <li><a href="./" aria-current="page">blog</a></li>
+          <li><a href="../#contact">contact</a></li>
+        </ul>
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Toggle theme">☀</button>
+        <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-label="Open menu" aria-expanded="false">≡</button>
+      </div>
+    </nav>
+  </header>
+  <main id="main">
+    <article class="article article-wide">
+      <a class="back" href="./">← cd ../blog</a>
+      <h1 style="margin-top:20px">Let the agent do the typing: connect Jira and Confluence to your AI assistant</h1>
+      <p class="meta"><time datetime="2026-11-22">2026-11-22</time> · 15 min read · #ai #productowner #mcp #copilot</p>
+
+      <p>
+        Most Product Owners and Product Managers don't lose time on decisions. They lose it on
+        clicks: creating epics, splitting features into stories, copying acceptance criteria,
+        updating Confluence pages, and preparing the backlog before PI Planning.
+      </p>
+      <p>
+        In an <a href="https://www.linkedin.com/in/hemanthkolli">earlier LinkedIn post</a> I shared the short version of a
+        small hack: connect an AI agent to your backlog tools and let it draft while you decide.
+        A few people asked how to actually set it up, and whether it's safe for company data.
+        This post is my attempt at a complete, honest answer. It's what worked for me; your
+        company's policies come first.
+      </p>
+      <p>
+        All config files from this post are also in a small companion repository you can copy from:
+        <a href="https://github.com/Hemanthkolli/jira-confluence-mcp-guide">github.com/Hemanthkolli/jira-confluence-mcp-guide</a>.
+      </p>
+
+      <nav class="toc" aria-label="Contents">
+        <p class="toc-title">contents</p>
+        <ol>
+          <li><a href="#idea">The idea in one minute</a></li>
+          <li><a href="#architecture">How the pieces fit together</a></li>
+          <li><a href="#safety">Is our organisation's data safe?</a></li>
+          <li><a href="#token">Step 1: Create a token in Jira and Confluence</a></li>
+          <li><a href="#install">Step 2: Install the MCP server without sudo</a></li>
+          <li><a href="#secrets">Step 3: Keep the token out of config files</a></li>
+          <li><a href="#ide">Step 4: Connect your IDE (VS Code, Visual Studio, JetBrains, …)</a></li>
+          <li><a href="#test">Step 5: First test, read-only</a></li>
+          <li><a href="#example">Worked example: PI Planning prep with GitHub Copilot</a></li>
+          <li><a href="#writes">Turning on writes, carefully</a></li>
+          <li><a href="#troubleshooting">Troubleshooting</a></li>
+          <li><a href="#checklist">Checklist</a></li>
+        </ol>
+      </nav>
+
+      <!-- ===================================================== -->
+      <h2 id="idea">The idea in one minute</h2>
+      <ol>
+        <li>Create a personal token for Jira and Confluence.</li>
+        <li>Run a small <strong>MCP server</strong> on your own machine. MCP (Model Context Protocol) is an open standard that lets AI assistants call tools; this server's tools are "search Jira", "read a page", "create an issue" and so on.</li>
+        <li>Connect it to the assistant you already have in your IDE, for example GitHub Copilot in VS Code.</li>
+        <li>Give it your planning input: meeting notes, a rough idea, last PI's objectives.</li>
+        <li>Let it draft epics, stories, acceptance criteria and Confluence pages in your team's format. You review, adjust and decide.</li>
+      </ol>
+      <blockquote>The agent does the typing. You do the thinking.</blockquote>
+
+      <!-- ===================================================== -->
+      <h2 id="architecture">How the pieces fit together</h2>
+      <p>
+        It helps to know exactly where things run before deciding whether it's acceptable for your
+        organisation. There are four parts:
+      </p>
+
+      <figure class="arch">
+        <div class="arch-scroll">
+        <svg viewBox="0 0 760 400" role="img" aria-labelledby="arch-title arch-desc" xmlns="http://www.w3.org/2000/svg">
+          <title id="arch-title">Architecture of a local MCP setup</title>
+          <desc id="arch-desc">The IDE and the local MCP server run on your laptop. The MCP server talks directly to Jira and Confluence over HTTPS using your token. The IDE sends prompts and tool results to the AI model service over HTTPS.</desc>
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" class="arch-arrowhead"/>
+            </marker>
+          </defs>
+
+          <!-- laptop boundary -->
+          <rect x="10" y="40" width="430" height="340" rx="12" class="arch-boundary"/>
+          <text x="26" y="66" class="arch-label">your laptop (no admin rights needed)</text>
+
+          <!-- IDE -->
+          <rect x="40" y="90" width="370" height="96" rx="10" class="arch-box"/>
+          <text x="58" y="118" class="arch-title">IDE + AI assistant</text>
+          <text x="58" y="142" class="arch-text">VS Code + GitHub Copilot (agent mode),</text>
+          <text x="58" y="162" class="arch-text">Visual Studio, JetBrains, Cursor, Claude Code…</text>
+
+          <!-- MCP server -->
+          <rect x="40" y="250" width="370" height="104" rx="10" class="arch-box arch-box-accent"/>
+          <text x="58" y="278" class="arch-title">mcp-atlassian (local process)</text>
+          <text x="58" y="302" class="arch-text">holds your token · read-only by default</text>
+          <text x="58" y="322" class="arch-text">limited to chosen projects and spaces</text>
+          <text x="58" y="342" class="arch-text">no open network port (stdio only)</text>
+
+          <!-- stdio link -->
+          <line x1="225" y1="188" x2="225" y2="246" class="arch-line" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+          <text x="236" y="222" class="arch-small">stdio (tool calls)</text>
+
+          <!-- company boundary -->
+          <rect x="480" y="230" width="270" height="150" rx="12" class="arch-boundary"/>
+          <text x="496" y="256" class="arch-label">your company</text>
+          <rect x="500" y="272" width="230" height="86" rx="10" class="arch-box"/>
+          <text x="518" y="300" class="arch-title">Jira + Confluence</text>
+          <text x="518" y="324" class="arch-text">Cloud or Data Center</text>
+          <text x="518" y="344" class="arch-text">same permissions as you</text>
+
+          <line x1="412" y1="302" x2="496" y2="315" class="arch-line" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+          <text x="420" y="292" class="arch-small">HTTPS + token</text>
+
+          <!-- AI model -->
+          <rect x="480" y="40" width="270" height="150" rx="12" class="arch-boundary arch-boundary-warn"/>
+          <text x="496" y="66" class="arch-label">AI model service</text>
+          <rect x="500" y="82" width="230" height="90" rx="10" class="arch-box"/>
+          <text x="518" y="110" class="arch-title">LLM endpoint</text>
+          <text x="518" y="134" class="arch-text">e.g. GitHub Copilot models,</text>
+          <text x="518" y="154" class="arch-text">or a company-hosted model</text>
+
+          <line x1="412" y1="138" x2="496" y2="128" class="arch-line arch-line-warn" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+          <text x="418" y="210" class="arch-small arch-warn-text">prompts + tool results</text>
+          <text x="418" y="226" class="arch-small arch-warn-text">(issue text you fetched)</text>
+        </svg>
+        </div>
+        <figcaption>
+          The token and the connection to Jira and Confluence never leave your laptop. What the
+          assistant reads from Jira or Confluence <em>is</em> sent to the AI model as context,
+          the same way your code is when you ask Copilot about it.
+        </figcaption>
+      </figure>
+
+      <ol>
+        <li><strong>Your IDE and its AI assistant.</strong> It decides which tool to call based on your prompt.</li>
+        <li><strong>The MCP server</strong>, a small Python program the IDE starts on your machine. It talks to the IDE over <code>stdio</code> (standard input/output), so it doesn't listen on any network port.</li>
+        <li><strong>Jira and Confluence.</strong> The MCP server calls their REST APIs over HTTPS with <em>your</em> token, so it can see and do exactly what you can. No more, no less.</li>
+        <li><strong>The AI model service.</strong> Your prompt, and the results of any tool calls, are sent to the model so it can reason about them.</li>
+      </ol>
+
+      <!-- ===================================================== -->
+      <h2 id="safety">Is our organisation's data safe?</h2>
+      <p>
+        Short answer: it can be, if you're honest about the one place data leaves the
+        laptop, and you put a few controls in place. Here is how I think about it.
+      </p>
+
+      <h3>What stays on your machine</h3>
+      <ul>
+        <li><strong>The token.</strong> It's only read by the local MCP server. It's never sent to the AI model.</li>
+        <li><strong>The connection to Jira and Confluence.</strong> It goes directly from your laptop to your company's instance. There's no third-party relay or hosted connector in between.</li>
+        <li><strong>Everything the assistant didn't fetch.</strong> The server doesn't sync or index your Jira. It only calls the API when the assistant asks for something specific.</li>
+      </ul>
+
+      <h3>What does leave your machine</h3>
+      <div class="callout callout-warn">
+        <p><strong>Be clear about this with your team and security colleagues:</strong> when the assistant reads an issue or a page, that text becomes part of the conversation and is sent to the AI model service. That's how the model can summarise or rewrite it.</p>
+      </div>
+      <p>So the real question is not "does data leave?" but "is the AI service we use approved for this data?" Some things to check:</p>
+      <ul>
+        <li><strong>Use the company-approved assistant.</strong> With GitHub Copilot Business or Enterprise, GitHub states that your prompts and code are not used to train its models; check your organisation's agreement and data-retention settings for the details. A personal or free plan usually comes with different terms.</li>
+        <li><strong>Data classification.</strong> Don't point the agent at spaces or projects with data your company classifies as confidential or restricted (HR, legal, customer personal data) unless that's explicitly allowed.</li>
+        <li><strong>If nothing may leave at all</strong>, use a model your company hosts, or a local model your IDE supports. The MCP setup in this post stays the same; only the model endpoint changes.</li>
+      </ul>
+
+      <h3>Controls that make this safer</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Risk</th><th>Control</th><th>Where</th></tr></thead>
+          <tbody>
+            <tr><td>The agent changes or deletes things</td><td><code>READ_ONLY_MODE=true</code> to start; turn writes on later, per project</td><td>MCP server</td></tr>
+            <tr><td>Too much data in reach</td><td><code>JIRA_PROJECTS_FILTER</code>, <code>CONFLUENCE_SPACES_FILTER</code>, <code>TOOLSETS=default</code></td><td>MCP server</td></tr>
+            <tr><td>Leaked or long-lived token</td><td>Short expiry, never in Git, kept in a keychain or prompted by the IDE</td><td>Atlassian + your machine</td></tr>
+            <tr><td>The agent acts without asking</td><td>Keep tool confirmation on; never auto-approve write tools</td><td>IDE</td></tr>
+            <tr><td>Prompt injection: a ticket containing text like "ignore previous instructions…"</td><td>Read-only by default, human review before every write, filters on projects</td><td>You + MCP server</td></tr>
+            <tr><td>Unapproved tools in use</td><td>Admins can enable or disable MCP for Copilot through organisation policy</td><td>GitHub org settings</td></tr>
+            <tr><td>"Who changed this?"</td><td>Every change is made as <em>your</em> user, so Jira history and audit logs show it like any other change</td><td>Jira / Confluence</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        One more honest note: <code>mcp-atlassian</code>, the server I use here, is a popular open-source
+        project (MIT licence), <strong>not an official Atlassian product</strong>. Read its code or ask your
+        security team to review it, and pin the version you approved (I show how below). Atlassian also
+        offers an official remote MCP server for Cloud that uses OAuth instead of tokens; it's worth
+        comparing if you're on Cloud.
+      </p>
+
+      <!-- ===================================================== -->
+      <h2 id="token">Step 1: Create a token in Jira and Confluence</h2>
+      <p>Which kind of token you need depends on how your company runs Atlassian. If your Jira address ends in <code>atlassian.net</code>, you're on <strong>Cloud</strong>. Otherwise it's most likely <strong>Data Center</strong> (or the older Server).</p>
+
+      <div class="tabs" data-tabs data-group="atlassian">
+        <div class="tab-list" role="tablist" aria-label="Atlassian deployment">
+          <button role="tab" data-tab="cloud">Cloud</button>
+          <button role="tab" data-tab="dc">Data Center / Server</button>
+        </div>
+        <section class="tab-panel" data-tab="cloud">
+          <h4 class="tab-fallback">Cloud</h4>
+          <p>On Cloud, one <strong>API token</strong> covers both Jira and Confluence.</p>
+          <ol>
+            <li>Open <a href="https://id.atlassian.com/manage-profile/security/api-tokens">id.atlassian.com → Security → API tokens</a>.</li>
+            <li>Click <strong>Create API token</strong>.</li>
+            <li>Give it a clear name, e.g. <code>mcp-laptop-2026</code>, and pick the <strong>shortest expiry</strong> you can live with.</li>
+            <li>Click <strong>Create</strong>, then <strong>Copy</strong>. You won't see the token again.</li>
+          </ol>
+          <p>You'll also need the email address of your Atlassian account (used as the username), plus these URLs:</p>
+          <pre><code>JIRA_URL=https://your-company.atlassian.net
+CONFLUENCE_URL=https://your-company.atlassian.net/wiki</code></pre>
+          <div class="callout"><p>Atlassian also offers "API token with scopes". The MCP server's documentation uses the classic API token for Cloud, so check its docs before using a scoped one.</p></div>
+        </section>
+        <section class="tab-panel" data-tab="dc">
+          <h4 class="tab-fallback">Data Center / Server</h4>
+          <p>On Data Center you create a <strong>Personal Access Token (PAT)</strong> in each product separately. PATs are available from Jira 8.14 and Confluence 7.9 onwards.</p>
+          <ol>
+            <li>In <strong>Jira</strong>, click your avatar (top right) → <strong>Profile</strong> → <strong>Personal Access Tokens</strong>.</li>
+            <li>Click <strong>Create token</strong>, give it a name and set <strong>Automatic expiry</strong> (for example 30 or 90 days).</li>
+            <li>Click <strong>Create</strong> and copy the token right away.</li>
+            <li>Repeat the same steps in <strong>Confluence</strong>: avatar → <strong>Settings</strong> or <strong>Profile</strong> → <strong>Personal Access Tokens</strong>.</li>
+          </ol>
+          <pre><code>JIRA_URL=https://jira.your-company.com
+CONFLUENCE_URL=https://confluence.your-company.com</code></pre>
+          <div class="callout"><p>Some companies turn PATs off or limit their lifetime. If you don't see the menu, ask your Atlassian admins. Don't try to work around it.</p></div>
+        </section>
+      </div>
+
+      <p><strong>Good habits for any token:</strong> one token per machine and purpose, a short expiry, never in a Git repository, never pasted into a chat or a ticket, and revoke it on the same page the moment you don't need it.</p>
+
+      <!-- ===================================================== -->
+      <h2 id="install">Step 2: Install the MCP server without sudo</h2>
+      <p>
+        The server is a Python package. The easiest way to run it is with
+        <a href="https://docs.astral.sh/uv/"><code>uv</code></a>, a small tool that installs into your home folder,
+        downloads its own Python if needed, and doesn't need admin rights. Its <code>uvx</code> command runs a package
+        in an isolated environment.
+      </p>
+
+      <div class="tabs" data-tabs data-group="os">
+        <div class="tab-list" role="tablist" aria-label="Operating system">
+          <button role="tab" data-tab="linux">Linux</button>
+          <button role="tab" data-tab="mac">macOS</button>
+          <button role="tab" data-tab="windows">Windows</button>
+        </div>
+        <section class="tab-panel" data-tab="linux">
+          <h4 class="tab-fallback">Linux</h4>
+          <p>Installs to <code>~/.local/bin</code>, no sudo:</p>
+          <pre><code>curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+          <p>If your company doesn't allow piping scripts into a shell, use pip in user mode instead:</p>
+          <pre><code>python3 -m pip install --user uv</code></pre>
+          <p>Open a new terminal, then check it works and pin the version you've approved:</p>
+          <pre><code>uvx mcp-atlassian@0.24.7 --help</code></pre>
+        </section>
+        <section class="tab-panel" data-tab="mac">
+          <h4 class="tab-fallback">macOS</h4>
+          <p>With Homebrew (no sudo):</p>
+          <pre><code>brew install uv</code></pre>
+          <p>Without Homebrew, the installer puts it in <code>~/.local/bin</code>:</p>
+          <pre><code>curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+          <p>Open a new terminal, then check it works and pin the version you've approved:</p>
+          <pre><code>uvx mcp-atlassian@0.24.7 --help</code></pre>
+        </section>
+        <section class="tab-panel" data-tab="windows">
+          <h4 class="tab-fallback">Windows</h4>
+          <p>In PowerShell (as your normal user, not "Run as administrator"). It installs to <code>%USERPROFILE%\.local\bin</code>:</p>
+          <pre><code>powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"</code></pre>
+          <p>Or with winget, which installs per user:</p>
+          <pre><code>winget install --id=astral-sh.uv -e</code></pre>
+          <p>Open a new terminal, then check it works and pin the version you've approved:</p>
+          <pre><code>uvx mcp-atlassian@0.24.7 --help</code></pre>
+        </section>
+      </div>
+
+      <div class="callout">
+        <p><strong>Why pin the version?</strong> <code>uvx mcp-atlassian</code> without a version always fetches the latest release. Pinning means a new release only reaches your machine after you've decided to upgrade. That's a small but real supply-chain safeguard. <code>0.24.7</code> was current when I wrote this; check <a href="https://pypi.org/project/mcp-atlassian/">PyPI</a> for newer versions.</p>
+      </div>
+      <p>Behind a corporate proxy? Set <code>HTTPS_PROXY</code> in the same <code>env</code> block as the other settings. Company root certificates in your operating system's trust store are picked up automatically.</p>
+
+      <!-- ===================================================== -->
+      <h2 id="secrets">Step 3: Keep the token out of config files</h2>
+      <p>
+        Many examples online put the token straight into a JSON file. That's how tokens end up
+        in Git history and screenshots. Better options, from my favourite down:
+      </p>
+      <ol>
+        <li><strong>Let the IDE ask for it.</strong> VS Code and Visual Studio can prompt for the token once and store it encrypted. That's shown in step 4.</li>
+        <li><strong>Read it from your keychain at runtime.</strong> The server supports <code>*_COMMAND</code> variables: instead of the token, you give it a command that prints the token.</li>
+        <li><strong>A private env file</strong> in your home folder, readable only by you, and never inside a project folder.</li>
+      </ol>
+
+      <div class="tabs" data-tabs data-group="os">
+        <div class="tab-list" role="tablist" aria-label="Operating system">
+          <button role="tab" data-tab="linux">Linux</button>
+          <button role="tab" data-tab="mac">macOS</button>
+          <button role="tab" data-tab="windows">Windows</button>
+        </div>
+        <section class="tab-panel" data-tab="linux">
+          <h4 class="tab-fallback">Linux</h4>
+          <p>With the GNOME keyring (<code>secret-tool</code>), store the token once. It asks for the value, so it never ends up in your shell history:</p>
+          <pre><code>secret-tool store --label="Jira token" service mcp-atlassian account jira</code></pre>
+          <p>Then, in the server's <code>env</code>, use the command instead of the token:</p>
+          <pre><code>"JIRA_API_TOKEN_COMMAND": "secret-tool lookup service mcp-atlassian account jira"</code></pre>
+          <p>If <code>secret-tool</code> isn't installed and you can't install it, use an env file only you can read:</p>
+          <pre><code>mkdir -p ~/.config/mcp-atlassian
+touch ~/.config/mcp-atlassian/env &amp;&amp; chmod 600 ~/.config/mcp-atlassian/env</code></pre>
+        </section>
+        <section class="tab-panel" data-tab="mac">
+          <h4 class="tab-fallback">macOS</h4>
+          <p>macOS has a keychain command built in. Store the token once; the trailing <code>-w</code> makes it prompt for the value:</p>
+          <pre><code>security add-generic-password -a "$USER" -s mcp-atlassian-jira -w</code></pre>
+          <p>Then, in the server's <code>env</code>:</p>
+          <pre><code>"JIRA_API_TOKEN_COMMAND": "security find-generic-password -s mcp-atlassian-jira -w"</code></pre>
+        </section>
+        <section class="tab-panel" data-tab="windows">
+          <h4 class="tab-fallback">Windows</h4>
+          <p>The simplest secure option on Windows is to let VS Code or Visual Studio prompt for the token (step 4). If you use a password manager with a CLI, the command approach works too, for example with 1Password:</p>
+          <pre><code>"JIRA_API_TOKEN_COMMAND": "op read \"op://Work/Jira token/credential\""</code></pre>
+          <p>On Windows, use double quotes inside the command. For a <code>.bat</code> or PowerShell helper, prefix it with <code>cmd /c</code> or <code>powershell -NoProfile -Command</code>.</p>
+        </section>
+      </div>
+      <p>For Data Center, the variables are named <code>JIRA_PERSONAL_TOKEN_COMMAND</code> and <code>CONFLUENCE_PERSONAL_TOKEN_COMMAND</code>.</p>
+
+      <!-- ===================================================== -->
+      <h2 id="ide">Step 4: Connect your IDE</h2>
+      <p>
+        Every IDE uses the same server and the same settings; only the config file differs.
+        The examples use Cloud with read-only mode and a project filter. For Data Center, replace
+        <code>JIRA_USERNAME</code> + <code>JIRA_API_TOKEN</code> with <code>JIRA_PERSONAL_TOKEN</code> (same for Confluence).
+      </p>
+
+      <div class="tabs" data-tabs data-group="ide">
+        <div class="tab-list" role="tablist" aria-label="IDE">
+          <button role="tab" data-tab="vscode">VS Code + Copilot</button>
+          <button role="tab" data-tab="vs">Visual Studio</button>
+          <button role="tab" data-tab="jetbrains">JetBrains</button>
+          <button role="tab" data-tab="cursor">Cursor</button>
+          <button role="tab" data-tab="claude">Claude Code</button>
+        </div>
+
+        <section class="tab-panel" data-tab="vscode">
+          <h4 class="tab-fallback">VS Code + GitHub Copilot</h4>
+          <ol>
+            <li>Open the Command Palette and run <strong>MCP: Open User Configuration</strong> (all projects), or create <code>.vscode/mcp.json</code> in a project.</li>
+            <li>Paste this. The <code>inputs</code> block makes VS Code ask for the token once and store it encrypted, so it's never in the file:</li>
+          </ol>
+          <pre><code>{
+  "inputs": [
+    {
+      "id": "atlassian-token",
+      "type": "promptString",
+      "description": "Atlassian API token",
+      "password": true
+    }
+  ],
+  "servers": {
+    "atlassian": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["mcp-atlassian@0.24.7"],
+      "env": {
+        "JIRA_URL": "https://your-company.atlassian.net",
+        "JIRA_USERNAME": "you@your-company.com",
+        "JIRA_API_TOKEN": "${input:atlassian-token}",
+        "CONFLUENCE_URL": "https://your-company.atlassian.net/wiki",
+        "CONFLUENCE_USERNAME": "you@your-company.com",
+        "CONFLUENCE_API_TOKEN": "${input:atlassian-token}",
+        "READ_ONLY_MODE": "true",
+        "TOOLSETS": "default",
+        "JIRA_PROJECTS_FILTER": "ABC",
+        "CONFLUENCE_SPACES_FILTER": "TEAM"
+      }
+    }
+  }
+}</code></pre>
+          <ol start="3">
+            <li>Click <strong>Start</strong> above the server name in the file, or run <strong>MCP: List Servers</strong>. VS Code asks for the token the first time.</li>
+            <li>Open Copilot Chat, switch the mode to <strong>Agent</strong>, and click the tools icon. You should see the Jira and Confluence tools.</li>
+          </ol>
+          <div class="callout"><p>With Copilot Business or Enterprise, an organisation admin has to allow MCP servers in Copilot. If the tools don't appear, that policy is the first thing to check.</p></div>
+        </section>
+
+        <section class="tab-panel" data-tab="vs">
+          <h4 class="tab-fallback">Visual Studio</h4>
+          <p>Visual Studio 2022 (17.14 and later) supports MCP servers in Copilot's agent mode, using the same <code>servers</code> format as VS Code.</p>
+          <ol>
+            <li>Create <code>%USERPROFILE%\.mcp.json</code> for all solutions, or <code>.mcp.json</code> next to your solution file for one solution.</li>
+            <li>Paste the same <code>inputs</code> and <code>servers</code> block as in the VS Code tab.</li>
+            <li>Open Copilot Chat, select <strong>Agent</strong> mode, and enable the Atlassian tools in the tools picker.</li>
+          </ol>
+          <div class="callout"><p>If Visual Studio can't find <code>uvx</code>, use the full path: <code>C:\\Users\\&lt;you&gt;\\.local\\bin\\uvx.exe</code>. Remember the double backslashes in JSON.</p></div>
+        </section>
+
+        <section class="tab-panel" data-tab="jetbrains">
+          <h4 class="tab-fallback">JetBrains (IntelliJ, PyCharm, Rider, …)</h4>
+          <p>There are two common routes:</p>
+          <ul>
+            <li><strong>JetBrains AI Assistant:</strong> <em>Settings → Tools → AI Assistant → Model Context Protocol (MCP)</em> → <strong>Add</strong>, then paste the JSON below.</li>
+            <li><strong>GitHub Copilot plugin:</strong> in Copilot Chat, switch to <strong>Agent</strong> mode, click the tools icon → <strong>Add more tools…</strong>. This opens Copilot's <code>mcp.json</code>, which uses the same <code>servers</code> format as VS Code.</li>
+          </ul>
+          <pre><code>{
+  "mcpServers": {
+    "atlassian": {
+      "command": "uvx",
+      "args": ["mcp-atlassian@0.24.7"],
+      "env": {
+        "JIRA_URL": "https://your-company.atlassian.net",
+        "JIRA_USERNAME": "you@your-company.com",
+        "JIRA_API_TOKEN_COMMAND": "security find-generic-password -s mcp-atlassian-jira -w",
+        "READ_ONLY_MODE": "true",
+        "TOOLSETS": "default",
+        "JIRA_PROJECTS_FILTER": "ABC"
+      }
+    }
+  }
+}</code></pre>
+          <p>This example reads the token from the macOS keychain (step 3). Use the Linux or Windows command from step 3 on those systems.</p>
+        </section>
+
+        <section class="tab-panel" data-tab="cursor">
+          <h4 class="tab-fallback">Cursor</h4>
+          <p>Create <code>~/.cursor/mcp.json</code> for all projects, or <code>.cursor/mcp.json</code> in one project. Cursor uses the <code>mcpServers</code> format, the same as the JetBrains tab. Then enable the server under <em>Settings → MCP</em>.</p>
+          <p>Cursor has no password prompt like VS Code, so use the keychain command from step 3 rather than writing the token into the file.</p>
+        </section>
+
+        <section class="tab-panel" data-tab="claude">
+          <h4 class="tab-fallback">Claude Code</h4>
+          <p>One command, stored in your user settings and available in every project:</p>
+          <pre><code>claude mcp add atlassian --scope user \
+  -e JIRA_URL=https://your-company.atlassian.net \
+  -e JIRA_USERNAME=you@your-company.com \
+  -e "JIRA_API_TOKEN_COMMAND=security find-generic-password -s mcp-atlassian-jira -w" \
+  -e READ_ONLY_MODE=true -e TOOLSETS=default -e JIRA_PROJECTS_FILTER=ABC \
+  -- uvx mcp-atlassian@0.24.7</code></pre>
+          <p>Run <code>claude mcp list</code> to check it's connected. Claude Code asks before every tool call unless you allow it, so leave write tools on "ask".</p>
+        </section>
+      </div>
+
+      <!-- ===================================================== -->
+      <h2 id="test">Step 5: First test, read-only</h2>
+      <p>Start with questions that only read. If these work, the connection, token and filters are right:</p>
+      <ul>
+        <li><em>"List the open stories in project ABC assigned to me, with status and story points."</em></li>
+        <li><em>"Summarise the Confluence page 'Team working agreement' in five bullet points."</em></li>
+        <li><em>"Which epics in ABC have no stories yet?"</em></li>
+      </ul>
+      <p>Also check the filters work. Ask about a project that's <em>not</em> in <code>JIRA_PROJECTS_FILTER</code>; the agent shouldn't be able to see it.</p>
+
+      <!-- ===================================================== -->
+      <h2 id="example">Worked example: PI Planning prep with GitHub Copilot</h2>
+      <p>Here's the flow I use in VS Code with Copilot in agent mode. Nothing is written to Jira until the last step, and only after I've read the drafts.</p>
+
+      <h3>1. Teach it your conventions once</h3>
+      <p>Create a file in your workspace, for example <code>backlog-conventions.md</code>:</p>
+      <pre><code># Backlog conventions (team ABC)
+- Story title: "As a &lt;role&gt;, I want &lt;goal&gt;" (max 80 characters)
+- Description sections: Context, Scope, Out of scope
+- Acceptance criteria: Given / When / Then, 3 to 6 per story
+- Labels: pi-2027-1, plus one of: backend, frontend, platform
+- Story points: leave empty; the team estimates in refinement
+- Language: plain English, no internal code names</code></pre>
+
+      <h3>2. Ask for drafts, not actions</h3>
+      <div class="chat">
+        <p class="chat-you"><span>you</span>Read #file:meeting-notes-2026-11-20.md and #file:backlog-conventions.md. Then look at the open epics in Jira project ABC. Draft one new epic and the stories needed for the "supplier onboarding" topic. Show me the drafts as Markdown. Don't create anything in Jira.</p>
+        <p class="chat-agent"><span>copilot</span>Calls <code>jira_search</code> (read-only) and checks existing epics, then returns a Markdown draft: one epic, six stories, acceptance criteria in Given/When/Then, and a note that two of the stories overlap with the existing epic ABC-412.</p>
+      </div>
+
+      <h3>3. Review and adjust like you would with a colleague</h3>
+      <div class="chat">
+        <p class="chat-you"><span>you</span>Merge stories 3 and 4. Story 6 belongs in ABC-412, so move it there instead. Make the acceptance criteria of story 2 testable; "fast" isn't measurable.</p>
+      </div>
+
+      <h3>4. Only then, let it create</h3>
+      <p>Switch the server to allow writes (see the next section), then:</p>
+      <div class="chat">
+        <p class="chat-you"><span>you</span>Create the epic and the five stories in ABC exactly as in the final draft. Link the stories to the epic. Then list the new issue keys.</p>
+        <p class="chat-agent"><span>copilot</span>VS Code shows a confirmation for each <code>jira_create_issue</code> call with the exact fields. You click <strong>Continue</strong> only for the ones you've checked.</p>
+      </div>
+      <p>The same works for Confluence: <em>"Draft the PI objectives page in the format of last PI's page, but don't publish it"</em>, then review, then create it.</p>
+
+      <!-- ===================================================== -->
+      <h2 id="writes">Turning on writes, carefully</h2>
+      <ul>
+        <li>Change <code>READ_ONLY_MODE</code> to <code>"false"</code> only for the session where you create things, and set it back afterwards.</li>
+        <li>Keep <code>JIRA_PROJECTS_FILTER</code> limited to your own project, so a mistake can't reach other teams' boards.</li>
+        <li>For even tighter control, allow only the tools you need: <code>"ENABLED_TOOLS": "jira_search,jira_get_issue,jira_create_issue"</code>.</li>
+        <li>Never turn on "auto-approve" for write tools in your IDE. Reading each confirmation takes seconds; undoing 40 wrongly created issues doesn't.</li>
+      </ul>
+
+      <!-- ===================================================== -->
+      <h2 id="troubleshooting">Troubleshooting</h2>
+      <dl class="faq">
+        <dt>The IDE says <code>uvx</code> is not found</dt>
+        <dd>IDEs started from a menu often don't see your terminal's <code>PATH</code>. Use the full path: <code>~/.local/bin/uvx</code> on Linux and macOS (or <code>/opt/homebrew/bin/uvx</code> with Homebrew), and <code>C:\Users\&lt;you&gt;\.local\bin\uvx.exe</code> on Windows.</dd>
+        <dt><code>401 Unauthorized</code></dt>
+        <dd>On Cloud, check you used your email as the username and an API token, not your password. On Data Center, use <code>JIRA_PERSONAL_TOKEN</code> and no username. Also check the token hasn't expired.</dd>
+        <dt>SSL or certificate errors</dt>
+        <dd>Company root certificates from the OS trust store are used automatically. If it still fails, ask IT for the right CA bundle rather than turning verification off.</dd>
+        <dt>The tools don't show up in Copilot</dt>
+        <dd>Make sure you're in <strong>Agent</strong> mode, the server is started (<em>MCP: List Servers</em>), and your organisation allows MCP servers in Copilot.</dd>
+        <dt>The agent sees too much or too little</dt>
+        <dd>Check <code>JIRA_PROJECTS_FILTER</code> and <code>CONFLUENCE_SPACES_FILTER</code> (comma-separated keys), and remember the token can only see what <em>you</em> can see.</dd>
+      </dl>
+
+      <!-- ===================================================== -->
+      <h2 id="checklist">Checklist</h2>
+      <ul class="checklist">
+        <li>The AI assistant is approved by my organisation for this kind of data</li>
+        <li>Token has a short expiry and is stored in a keychain or IDE prompt, not in a file in Git</li>
+        <li>MCP server version is pinned and reviewed</li>
+        <li><code>READ_ONLY_MODE=true</code> by default</li>
+        <li>Projects and spaces are filtered to what I actually need</li>
+        <li>Tool confirmations are on in the IDE, and nothing is auto-approved for writes</li>
+        <li>Conventions file written once, reused every time</li>
+        <li>I review every draft before anything is created</li>
+      </ul>
+
+      <p>
+        I'm still learning what works best here, and tools in this space change quickly, so menu
+        names may have moved by the time you read this. If something is out of date or you've
+        found a better way, <a href="../#contact">please tell me</a>.
+      </p>
+      <p class="dim"><em>Practising what I preach: this post was drafted with AI from my own ideas and experience. The thinking is mine; the typing was shared.</em></p>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <span>© <span data-year>2026</span> Hemanth Kolli Kannaiah</span>
+      <span>built with plain html &amp; css · <a href="#main">↑ top</a></span>
+    </div>
+  </footer>
+  <script src="../js/main.js" defer></script>
+</body>
+</html>

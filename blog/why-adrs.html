@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Why I write ADRs · Hemanth Kolli</title>
+  <meta name="description" content="Why Architecture Decision Records are worth the effort.">
+  <link rel="canonical" href="https://hemanthkolli.com/blog/why-adrs.html">
+  <meta property="og:url" content="https://hemanthkolli.com/blog/why-adrs.html">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230b0f14'/><text x='5' y='23' font-family='monospace' font-size='18' fill='%234ade80'>&gt;_</text></svg>">
+  <script>try{var t=localStorage.getItem("theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <nav class="nav container" aria-label="Main">
+      <a class="logo" href="../"><span class="prompt">~/</span>hemanth</a>
+      <div class="nav-right">
+        <ul class="nav-links">
+          <li><a href="../#about">about</a></li>
+          <li><a href="../#experience">experience</a></li>
+          <li><a href="../#projects">projects</a></li>
+          <li><a href="./" aria-current="page">blog</a></li>
+          <li><a href="../#contact">contact</a></li>
+        </ul>
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Toggle theme">☀</button>
+        <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-label="Open menu" aria-expanded="false">≡</button>
+      </div>
+    </nav>
+  </header>
+  <main id="main">
+    <article class="article">
+      <a class="back" href="./">← cd ../blog</a>
+      <h1 style="margin-top:20px">Why I write Architecture Decision Records</h1>
+      <p class="meta"><time datetime="2026-11-15">2026-11-15</time> · 3 min read · #architecture #adr</p>
+
+      <p>
+        Six months after a decision, nobody remembers why it was made. The person who made it
+        may have moved on, and the context lives in a meeting nobody recorded. An
+        <strong>Architecture Decision Record</strong> (ADR) fixes that with one short document
+        per decision.
+      </p>
+
+      <h2>The format I use</h2>
+      <pre><code># ADR-0007: Use AWS CDK for new platform stacks
+
+## Status
+Accepted
+
+## Context
+What problem are we solving? What constraints apply?
+
+## Decision
+What we chose, in one or two sentences.
+
+## Consequences
+What gets easier, what gets harder, what we must watch.</code></pre>
+
+      <h2>What makes a good ADR</h2>
+      <ul>
+        <li><strong>One decision per record.</strong> If it needs two headings, it's two ADRs.</li>
+        <li><strong>Options you rejected.</strong> These are often the most valuable part.</li>
+        <li><strong>Honest consequences.</strong> Every choice has a cost; write it down.</li>
+        <li><strong>Immutable once accepted.</strong> Supersede it with a new ADR instead of editing history.</li>
+      </ul>
+
+      <h2>What it changed for us</h2>
+      <p>
+        In architecture groups I've been part of, ADRs gave us a shared place to discuss trade-offs
+        before building, and a quick answer for every new team member who asks "why is it
+        like this?". The time spent writing them is small compared with the meetings they save.
+      </p>
+
+      <blockquote>If a decision is worth arguing about, it's worth writing down.</blockquote>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <span>© <span data-year>2026</span> Hemanth Kolli Kannaiah</span>
+      <span>built with plain html &amp; css · <a href="#main">↑ top</a></span>
+    </div>
+  </footer>
+  <script src="../js/main.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Blog · Hemanth Kolli</title>
+  <meta name="description" content="Notes on cloud architecture, infrastructure as code and DevSecOps.">
+  <link rel="canonical" href="https://hemanthkolli.com/blog/">
+  <meta property="og:url" content="https://hemanthkolli.com/blog/">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230b0f14'/><text x='5' y='23' font-family='monospace' font-size='18' fill='%234ade80'>&gt;_</text></svg>">
+  <script>try{var t=localStorage.getItem("theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <nav class="nav container" aria-label="Main">
+      <a class="logo" href="../"><span class="prompt">~/</span>hemanth</a>
+      <div class="nav-right">
+        <ul class="nav-links">
+          <li><a href="../#about">about</a></li>
+          <li><a href="../#experience">experience</a></li>
+          <li><a href="../#projects">projects</a></li>
+          <li><a href="./" aria-current="page">blog</a></li>
+          <li><a href="../#contact">contact</a></li>
+        </ul>
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Toggle theme">☀</button>
+        <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-label="Open menu" aria-expanded="false">≡</button>
+      </div>
+    </nav>
+  </header>
+  <main id="main" class="container">
+    <div class="page-head">
+      <h1><span class="prompt">$ </span>ls ~/blog</h1>
+      <p>Notes on solution architecture, cloud platforms, regulated IT, AI and whatever else I'm learning.</p>
+    </div>
+    <label for="q" class="dim" style="display:block;font-family:var(--mono)">grep</label>
+    <input id="q" class="filter" type="search" placeholder="filter posts…" data-filter autocomplete="off">
+    <ul class="posts">
+      <li data-post>
+        <time datetime="2026-11-22">2026-11-22</time>
+        <div>
+          <a class="title" href="ai-agent-backlog.html">Let the agent do the typing: connect Jira and Confluence to your AI assistant</a>
+          <p>A step-by-step guide: tokens, a local MCP server without admin rights, GitHub Copilot and other IDEs, and how to keep company data safe. #ai #mcp #copilot</p>
+        </div>
+      </li>
+      <li data-post>
+        <time datetime="2026-11-18">2026-11-18</time>
+        <div>
+          <a class="title" href="hello-world.html">Hello, world: why I'm finally writing in public</a>
+          <p>What to expect here: cloud architecture, IaC and lessons from real platforms.</p>
+        </div>
+      </li>
+      <li data-post>
+        <time datetime="2026-11-15">2026-11-15</time>
+        <div>
+          <a class="title" href="why-adrs.html">Why I write Architecture Decision Records</a>
+          <p>A short, boring document that saves hours of meetings later. #architecture #adr</p>
+        </div>
+      </li>
+    </ul>
+    <p class="dim" data-empty hidden>No posts match. Try another word.</p>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <span>© <span data-year>2026</span> Hemanth Kolli Kannaiah</span>
+      <span>built with plain html &amp; css · <a href="#main">↑ top</a></span>
+    </div>
+  </footer>
+  <script src="../js/main.js" defer></script>
+</body>
+</html>

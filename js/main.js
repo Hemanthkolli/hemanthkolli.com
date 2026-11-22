@@ -1,0 +1,148 @@
+// Small progressive enhancements. The site works fully without JavaScript.
+(function () {
+  const root = document.documentElement;
+
+  // ---- Theme toggle (remembers choice per browser) ----
+  const toggle = document.querySelector("[data-theme-toggle]");
+  const stored = (() => { try { return localStorage.getItem("theme"); } catch { return null; } })();
+  if (stored === "light" || stored === "dark") root.setAttribute("data-theme", stored);
+
+  const current = () =>
+    root.getAttribute("data-theme") ||
+    (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+
+  const paint = () => {
+    if (!toggle) return;
+    const t = current();
+    toggle.textContent = t === "dark" ? "☀" : "☾";
+    toggle.setAttribute("aria-label", t === "dark" ? "Switch to light theme" : "Switch to dark theme");
+  };
+  paint();
+
+  toggle?.addEventListener("click", () => {
+    const next = current() === "dark" ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    try { localStorage.setItem("theme", next); } catch {}
+    paint();
+  });
+
+  // ---- Mobile menu ----
+  const menuBtn = document.querySelector("[data-menu-toggle]");
+  const links = document.querySelector(".nav-links");
+  menuBtn?.addEventListener("click", () => {
+    const open = links.classList.toggle("open");
+    menuBtn.setAttribute("aria-expanded", String(open));
+  });
+  links?.addEventListener("click", (e) => {
+    if (e.target.closest("a")) {
+      links.classList.remove("open");
+      menuBtn?.setAttribute("aria-expanded", "false");
+    }
+  });
+
+  // ---- Typing effect for the hero command ----
+  const typed = document.querySelector("[data-type]");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (typed && !reduce) {
+    const text = typed.textContent;
+    typed.textContent = "";
+    let i = 0;
+    const tick = () => {
+      typed.textContent = text.slice(0, ++i);
+      if (i < text.length) setTimeout(tick, 70);
+    };
+    setTimeout(tick, 300);
+  }
+
+  // ---- Reveal on scroll ----
+  const els = document.querySelectorAll(".reveal");
+  if ("IntersectionObserver" in window && !reduce) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (en.isIntersecting) { en.target.classList.add("visible"); io.unobserve(en.target); }
+      });
+    }, { rootMargin: "0px 0px -60px 0px" });
+    els.forEach((el) => io.observe(el));
+  } else {
+    els.forEach((el) => el.classList.add("visible"));
+  }
+
+  // ---- Blog filter (blog index only) ----
+  const filter = document.querySelector("[data-filter]");
+  if (filter) {
+    const items = [...document.querySelectorAll("[data-post]")];
+    const empty = document.querySelector("[data-empty]");
+    filter.addEventListener("input", () => {
+      const q = filter.value.trim().toLowerCase();
+      let shown = 0;
+      items.forEach((li) => {
+        const hit = li.textContent.toLowerCase().includes(q);
+        li.hidden = !hit;
+        if (hit) shown++;
+      });
+      if (empty) empty.hidden = shown !== 0;
+    });
+  }
+
+  // ---- Tabs: groups with the same data-group stay in sync (e.g. pick your OS once) ----
+  const tabGroups = [...document.querySelectorAll("[data-tabs]")];
+  const load = (k) => { try { return localStorage.getItem("tab:" + k); } catch { return null; } };
+  const save = (k, v) => { try { localStorage.setItem("tab:" + k, v); } catch {} };
+  const select = (box, name) => {
+    const buttons = [...box.querySelectorAll(".tab-list button")];
+    if (!buttons.some((b) => b.dataset.tab === name)) name = buttons[0]?.dataset.tab;
+    buttons.forEach((b) => {
+      const on = b.dataset.tab === name;
+      b.setAttribute("aria-selected", String(on));
+      b.tabIndex = on ? 0 : -1;
+    });
+    box.querySelectorAll(".tab-panel").forEach((p) => { p.hidden = p.dataset.tab !== name; });
+  };
+  tabGroups.forEach((box, i) => {
+    box.classList.add("js-tabs");
+    const group = box.dataset.group || "g" + i;
+    const buttons = [...box.querySelectorAll(".tab-list button")];
+    buttons.forEach((b) => {
+      b.id = `tab-${i}-${b.dataset.tab}`;
+      const panel = box.querySelector(`.tab-panel[data-tab="${b.dataset.tab}"]`);
+      if (panel) { panel.setAttribute("role", "tabpanel"); panel.setAttribute("aria-labelledby", b.id); }
+      b.addEventListener("click", () => {
+        save(group, b.dataset.tab);
+        tabGroups.filter((x) => (x.dataset.group || "") === group).forEach((x) => select(x, b.dataset.tab));
+      });
+      b.addEventListener("keydown", (e) => {
+        if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+        const j = (buttons.indexOf(b) + (e.key === "ArrowRight" ? 1 : buttons.length - 1)) % buttons.length;
+        buttons[j].click(); buttons[j].focus();
+      });
+    });
+    let initial = load(group);
+    if (!initial && group === "os") {
+      const p = navigator.userAgent;
+      initial = /Windows/.test(p) ? "windows" : /Mac/.test(p) ? "mac" : "linux";
+    }
+    select(box, initial);
+  });
+
+  // ---- Copy buttons on code blocks inside articles ----
+  document.querySelectorAll(".article pre").forEach((pre) => {
+    const wrap = document.createElement("div");
+    wrap.className = "code-wrap";
+    pre.parentNode.insertBefore(wrap, pre);
+    wrap.appendChild(pre);
+    const btn = document.createElement("button");
+    btn.type = "button"; btn.className = "copy-btn"; btn.textContent = "copy";
+    btn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(pre.innerText);
+        btn.textContent = "copied";
+      } catch { btn.textContent = "select + ctrl-c"; }
+      setTimeout(() => (btn.textContent = "copy"), 1500);
+    });
+    wrap.appendChild(btn);
+  });
+
+  // ---- Footer year ----
+  const y = document.querySelector("[data-year]");
+  if (y) y.textContent = new Date().getFullYear();
+})();
