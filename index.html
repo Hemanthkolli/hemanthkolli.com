@@ -145,52 +145,84 @@
 
     <!-- ============ EXPERIENCE ============ -->
     <section id="experience" class="container reveal">
-      <h2 class="section-title"><span class="hash">#</span>path <span class="hint">git log --oneline</span></h2>
-      <p class="dim" style="margin-top:-8px">What I've worked on, without the company names. This site is about me and my own work.</p>
-      <ol class="log">
-        <li>
-          <div class="meta"><span class="hash">HEAD</span>2026 — now</div>
-          <h3>Cloud architecture for an integration platform</h3>
-          <ul>
-            <li>Cloud infrastructure behind an integration platform: infrastructure as code, networking, security and operations.</li>
-          </ul>
+      <h2 class="section-title"><span class="hash">#</span>path <span class="hint">career map</span></h2>
+      <p class="dim" style="margin-top:-8px">What I've worked on over the years, without the company names. Click an area to see where it shows up.</p>
+      <figure class="skillmap">
+        <figcaption class="skillmap-cap"><span class="prompt">$</span> git log --stat --since=2015 <span class="dim">· what I spent my time on, by year</span></figcaption>
+        <div class="skillmap-scroll">
+          <table class="skillmap-grid" aria-label="Areas of work by year, from 2015 to 2026">
+            <thead><tr><td></td><th scope="col">’15</th><th scope="col">’16</th><th scope="col">’17</th><th scope="col">’18</th><th scope="col">’19</th><th scope="col">’20</th><th scope="col">’21</th><th scope="col">’22</th><th scope="col">’23</th><th scope="col">’24</th><th scope="col">’25</th><th scope="col">’26</th></tr></thead>
+            <tbody>
+            <tr data-area="embedded"><th scope="row"><button type="button" class="area-btn" data-filter-area="embedded">embedded &amp; networking</button></th><td class="lvl-3" title="embedded &amp; networking, 2015: a lot"><span class="sr">a lot</span></td><td class="lvl-3" title="embedded &amp; networking, 2016: a lot"><span class="sr">a lot</span></td><td class="lvl-3" title="embedded &amp; networking, 2017: a lot"><span class="sr">a lot</span></td><td class="lvl-2" title="embedded &amp; networking, 2018: a fair amount"><span class="sr">a fair amount</span></td><td class="lvl-1" title="embedded &amp; networking, 2019: a little"><span class="sr">a little</span></td><td class="lvl-1" title="embedded &amp; networking, 2020: a little"><span class="sr">a little</span></td><td class="lvl-0" title="embedded &amp; networking, 2021: none"><span class="sr">none</span></td><td class="lvl-0" title="embedded &amp; networking, 2022: none"><span class="sr">none</span></td><td class="lvl-0" title="embedded &amp; networking, 2023: none"><span class="sr">none</span></td><td class="lvl-0" title="embedded &amp; networking, 2024: none"><span class="sr">none</span></td><td class="lvl-0" title="embedded &amp; networking, 2025: none"><span class="sr">none</span></td><td class="lvl-0" title="embedded &amp; networking, 2026: none"><span class="sr">none</span></td></tr>
+            <tr data-area="iot"><th scope="row"><button type="button" class="area-btn" data-filter-area="iot">IoT &amp; sensors</button></th><td class="lvl-0" title="IoT &amp; sensors, 2015: none"><span class="sr">none</span></td><td class="lvl-1" title="IoT &amp; sensors, 2016: a little"><span class="sr">a little</span></td><td class="lvl-1" title="IoT &amp; sensors, 2017: a little"><span class="sr">a little</span></td><td class="lvl-3" title="IoT &amp; sensors, 2018: a lot"><span class="sr">a lot</span></td><td class="lvl-3" title="IoT &amp; sensors, 2019: a lot"><span class="sr">a lot</span></td><td class="lvl-3" title="IoT &amp; sensors, 2020: a lot"><span class="sr">a lot</span></td><td class="lvl-0" title="IoT &amp; sensors, 2021: none"><span class="sr">none</span></td><td class="lvl-0" title="IoT &amp; sensors, 2022: none"><span class="sr">none</span></td><td class="lvl-0" title="IoT &amp; sensors, 2023: none"><span class="sr">none</span></td><td class="lvl-0" title="IoT &amp; sensors, 2024: none"><span class="sr">none</span></td><td class="lvl-0" title="IoT &amp; sensors, 2025: none"><span class="sr">none</span></td><td class="lvl-0" title="IoT &amp; sensors, 2026: none"><span class="sr">none</span></td></tr>
+            <tr data-area="cloud"><th scope="row"><button type="button" class="area-btn" data-filter-area="cloud">cloud &amp; AWS</button></th><td class="lvl-0" title="cloud &amp; AWS, 2015: none"><span class="sr">none</span></td><td class="lvl-1" title="cloud &amp; AWS, 2016: a little"><span class="sr">a little</span></td><td class="lvl-1" title="cloud &amp; AWS, 2017: a little"><span class="sr">a little</span></td><td class="lvl-1" title="cloud &amp; AWS, 2018: a little"><span class="sr">a little</span></td><td class="lvl-1" title="cloud &amp; AWS, 2019: a little"><span class="sr">a little</span></td><td class="lvl-1" title="cloud &amp; AWS, 2020: a little"><span class="sr">a little</span></td><td class="lvl-3" title="cloud &amp; AWS, 2021: a lot"><span class="sr">a lot</span></td><td class="lvl-3" title="cloud &amp; AWS, 2022: a lot"><span class="sr">a lot</span></td><td class="lvl-3" title="cloud &amp; AWS, 2023: a lot"><span class="sr">a lot</span></td><td class="lvl-2" title="cloud &amp; AWS, 2024: a fair amount"><span class="sr">a fair amount</span></td><td class="lvl-2" title="cloud &amp; AWS, 2025: a fair amount"><span class="sr">a fair amount</span></td><td class="lvl-3" title="cloud &amp; AWS, 2026: a lot"><span class="sr">a lot</span></td></tr>
+            <tr data-area="iac"><th scope="row"><button type="button" class="area-btn" data-filter-area="iac">infrastructure as code</button></th><td class="lvl-0" title="infrastructure as code, 2015: none"><span class="sr">none</span></td><td class="lvl-0" title="infrastructure as code, 2016: none"><span class="sr">none</span></td><td class="lvl-0" title="infrastructure as code, 2017: none"><span class="sr">none</span></td><td class="lvl-0" title="infrastructure as code, 2018: none"><span class="sr">none</span></td><td class="lvl-0" title="infrastructure as code, 2019: none"><span class="sr">none</span></td><td class="lvl-0" title="infrastructure as code, 2020: none"><span class="sr">none</span></td><td class="lvl-3" title="infrastructure as code, 2021: a lot"><span class="sr">a lot</span></td><td class="lvl-3" title="infrastructure as code, 2022: a lot"><span class="sr">a lot</span></td><td class="lvl-3" title="infrastructure as code, 2023: a lot"><span class="sr">a lot</span></td><td class="lvl-1" title="infrastructure as code, 2024: a little"><span class="sr">a little</span></td><td class="lvl-1" title="infrastructure as code, 2025: a little"><span class="sr">a little</span></td><td class="lvl-3" title="infrastructure as code, 2026: a lot"><span class="sr">a lot</span></td></tr>
+            <tr data-area="security"><th scope="row"><button type="button" class="area-btn" data-filter-area="security">security</button></th><td class="lvl-0" title="security, 2015: none"><span class="sr">none</span></td><td class="lvl-0" title="security, 2016: none"><span class="sr">none</span></td><td class="lvl-0" title="security, 2017: none"><span class="sr">none</span></td><td class="lvl-1" title="security, 2018: a little"><span class="sr">a little</span></td><td class="lvl-1" title="security, 2019: a little"><span class="sr">a little</span></td><td class="lvl-1" title="security, 2020: a little"><span class="sr">a little</span></td><td class="lvl-2" title="security, 2021: a fair amount"><span class="sr">a fair amount</span></td><td class="lvl-2" title="security, 2022: a fair amount"><span class="sr">a fair amount</span></td><td class="lvl-2" title="security, 2023: a fair amount"><span class="sr">a fair amount</span></td><td class="lvl-1" title="security, 2024: a little"><span class="sr">a little</span></td><td class="lvl-1" title="security, 2025: a little"><span class="sr">a little</span></td><td class="lvl-2" title="security, 2026: a fair amount"><span class="sr">a fair amount</span></td></tr>
+            <tr data-area="integration"><th scope="row"><button type="button" class="area-btn" data-filter-area="integration">integration &amp; APIs</button></th><td class="lvl-0" title="integration &amp; APIs, 2015: none"><span class="sr">none</span></td><td class="lvl-0" title="integration &amp; APIs, 2016: none"><span class="sr">none</span></td><td class="lvl-1" title="integration &amp; APIs, 2017: a little"><span class="sr">a little</span></td><td class="lvl-0" title="integration &amp; APIs, 2018: none"><span class="sr">none</span></td><td class="lvl-0" title="integration &amp; APIs, 2019: none"><span class="sr">none</span></td><td class="lvl-0" title="integration &amp; APIs, 2020: none"><span class="sr">none</span></td><td class="lvl-0" title="integration &amp; APIs, 2021: none"><span class="sr">none</span></td><td class="lvl-0" title="integration &amp; APIs, 2022: none"><span class="sr">none</span></td><td class="lvl-3" title="integration &amp; APIs, 2023: a lot"><span class="sr">a lot</span></td><td class="lvl-3" title="integration &amp; APIs, 2024: a lot"><span class="sr">a lot</span></td><td class="lvl-3" title="integration &amp; APIs, 2025: a lot"><span class="sr">a lot</span></td><td class="lvl-3" title="integration &amp; APIs, 2026: a lot"><span class="sr">a lot</span></td></tr>
+            <tr data-area="data"><th scope="row"><button type="button" class="area-btn" data-filter-area="data">data &amp; regulatory</button></th><td class="lvl-0" title="data &amp; regulatory, 2015: none"><span class="sr">none</span></td><td class="lvl-0" title="data &amp; regulatory, 2016: none"><span class="sr">none</span></td><td class="lvl-0" title="data &amp; regulatory, 2017: none"><span class="sr">none</span></td><td class="lvl-0" title="data &amp; regulatory, 2018: none"><span class="sr">none</span></td><td class="lvl-0" title="data &amp; regulatory, 2019: none"><span class="sr">none</span></td><td class="lvl-0" title="data &amp; regulatory, 2020: none"><span class="sr">none</span></td><td class="lvl-1" title="data &amp; regulatory, 2021: a little"><span class="sr">a little</span></td><td class="lvl-1" title="data &amp; regulatory, 2022: a little"><span class="sr">a little</span></td><td class="lvl-0" title="data &amp; regulatory, 2023: none"><span class="sr">none</span></td><td class="lvl-0" title="data &amp; regulatory, 2024: none"><span class="sr">none</span></td><td class="lvl-3" title="data &amp; regulatory, 2025: a lot"><span class="sr">a lot</span></td><td class="lvl-1" title="data &amp; regulatory, 2026: a little"><span class="sr">a little</span></td></tr>
+            <tr data-area="architecture"><th scope="row"><button type="button" class="area-btn" data-filter-area="architecture">architecture</button></th><td class="lvl-0" title="architecture, 2015: none"><span class="sr">none</span></td><td class="lvl-0" title="architecture, 2016: none"><span class="sr">none</span></td><td class="lvl-0" title="architecture, 2017: none"><span class="sr">none</span></td><td class="lvl-0" title="architecture, 2018: none"><span class="sr">none</span></td><td class="lvl-0" title="architecture, 2019: none"><span class="sr">none</span></td><td class="lvl-0" title="architecture, 2020: none"><span class="sr">none</span></td><td class="lvl-1" title="architecture, 2021: a little"><span class="sr">a little</span></td><td class="lvl-1" title="architecture, 2022: a little"><span class="sr">a little</span></td><td class="lvl-2" title="architecture, 2023: a fair amount"><span class="sr">a fair amount</span></td><td class="lvl-3" title="architecture, 2024: a lot"><span class="sr">a lot</span></td><td class="lvl-3" title="architecture, 2025: a lot"><span class="sr">a lot</span></td><td class="lvl-3" title="architecture, 2026: a lot"><span class="sr">a lot</span></td></tr>
+            <tr data-area="product"><th scope="row"><button type="button" class="area-btn" data-filter-area="product">product &amp; agile</button></th><td class="lvl-0" title="product &amp; agile, 2015: none"><span class="sr">none</span></td><td class="lvl-0" title="product &amp; agile, 2016: none"><span class="sr">none</span></td><td class="lvl-0" title="product &amp; agile, 2017: none"><span class="sr">none</span></td><td class="lvl-0" title="product &amp; agile, 2018: none"><span class="sr">none</span></td><td class="lvl-0" title="product &amp; agile, 2019: none"><span class="sr">none</span></td><td class="lvl-0" title="product &amp; agile, 2020: none"><span class="sr">none</span></td><td class="lvl-0" title="product &amp; agile, 2021: none"><span class="sr">none</span></td><td class="lvl-0" title="product &amp; agile, 2022: none"><span class="sr">none</span></td><td class="lvl-0" title="product &amp; agile, 2023: none"><span class="sr">none</span></td><td class="lvl-1" title="product &amp; agile, 2024: a little"><span class="sr">a little</span></td><td class="lvl-3" title="product &amp; agile, 2025: a lot"><span class="sr">a lot</span></td><td class="lvl-1" title="product &amp; agile, 2026: a little"><span class="sr">a little</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="skillmap-legend" aria-hidden="true"><span>less</span><i class="lvl-0"></i><i class="lvl-1"></i><i class="lvl-2"></i><i class="lvl-3"></i><span>more</span></div>
+        <p class="filter-status" data-filter-status hidden><span data-filter-label></span> <button type="button" class="btn btn-sm" data-filter-clear>show all</button></p>
+      </figure>
+
+      <ol class="jobs">
+        <li class="job job-current" data-areas="cloud iac integration security architecture">
+          <div class="job-when"><span class="job-period">2026 — now</span><span class="job-dur">now</span></div>
+          <article class="job-card">
+            <h3>Cloud architecture for an integration platform</h3>
+            <p>Working on the cloud infrastructure behind an integration platform.</p>
+            <ul class="tags"><li class="tag area-chip" data-chip="cloud">cloud &amp; AWS</li><li class="tag area-chip" data-chip="iac">infrastructure as code</li><li class="tag area-chip" data-chip="integration">integration &amp; APIs</li><li class="tag area-chip" data-chip="security">security</li><li class="tag area-chip" data-chip="architecture">architecture</li></ul>
+            <details><summary>more</summary><ul><li>Infrastructure as code, networking, security and operations for the platform.</li><li>Bringing back what I learned about data ownership and regulated delivery.</li></ul></details>
+          </article>
         </li>
-        <li>
-          <div class="meta"><span class="hash">a3f9c21</span>2025 — 2026</div>
-          <h3>Product owner &amp; solution architect, EU regulatory data platform</h3>
-          <ul>
-            <li>Data model and integration architecture for an EU Digital Product Passport, where compliance, traceability and data quality shape every decision.</li>
-            <li>Learned a lot about data ownership, working with legal and compliance colleagues, and delivering in a regulated setting.</li>
-          </ul>
+        <li class="job" data-areas="data integration architecture product">
+          <div class="job-when"><span class="job-period">2025 — 2026</span><span class="job-dur">1 yr</span></div>
+          <article class="job-card">
+            <h3>Product owner &amp; solution architect, EU regulatory data platform</h3>
+            <p>Data model and integration architecture for an EU Digital Product Passport.</p>
+            <ul class="tags"><li class="tag area-chip" data-chip="data">data &amp; regulatory</li><li class="tag area-chip" data-chip="integration">integration &amp; APIs</li><li class="tag area-chip" data-chip="architecture">architecture</li><li class="tag area-chip" data-chip="product">product &amp; agile</li></ul>
+            <details><summary>more</summary><ul><li>Was responsible for an end-to-end data model aligned with the regulation and industry semantic standards.</li><li>Helped shape an integration architecture that makes onboarding new data suppliers easier.</li><li>Learned a lot from working closely with legal and compliance colleagues.</li></ul></details>
+          </article>
         </li>
-        <li>
-          <div class="meta"><span class="hash">7be2d40</span>2023 — 2025</div>
-          <h3>Integration platform &amp; APIs</h3>
-          <ul>
-            <li>API delivery, platform operations and architecture standards for a large integration platform.</li>
-          </ul>
+        <li class="job" data-areas="integration architecture cloud">
+          <div class="job-when"><span class="job-period">2023 — 2025</span><span class="job-dur">2 yrs</span></div>
+          <article class="job-card">
+            <h3>Integration platform &amp; APIs</h3>
+            <p>API delivery, platform operations and architecture standards for a large integration platform.</p>
+            <ul class="tags"><li class="tag area-chip" data-chip="integration">integration &amp; APIs</li><li class="tag area-chip" data-chip="architecture">architecture</li><li class="tag area-chip" data-chip="cloud">cloud &amp; AWS</li></ul>
+            <details><summary>more</summary><ul><li>Supported teams delivering APIs on a shared platform.</li><li>Contributed to architecture standards and day-to-day platform operations.</li></ul></details>
+          </article>
         </li>
-        <li>
-          <div class="meta"><span class="hash">51c08aa</span>2021 — 2023</div>
-          <h3>Cloud engineering on AWS</h3>
-          <ul>
-            <li>Built and deployed AWS solutions with CloudFormation and AWS CDK, and wrote Architecture Decision Records.</li>
-            <li>Worked on cloud security (encryption, monitoring, access control), automation and multi-region data storage.</li>
-          </ul>
+        <li class="job" data-areas="cloud iac security data architecture">
+          <div class="job-when"><span class="job-period">2021 — 2023</span><span class="job-dur">2 yrs</span></div>
+          <article class="job-card">
+            <h3>Cloud engineering on AWS</h3>
+            <p>Built and deployed AWS solutions as code, and started writing Architecture Decision Records.</p>
+            <ul class="tags"><li class="tag area-chip" data-chip="cloud">cloud &amp; AWS</li><li class="tag area-chip" data-chip="iac">infrastructure as code</li><li class="tag area-chip" data-chip="security">security</li><li class="tag area-chip" data-chip="data">data &amp; regulatory</li><li class="tag area-chip" data-chip="architecture">architecture</li></ul>
+            <details><summary>more</summary><ul><li>CloudFormation and AWS CDK for platform infrastructure.</li><li>Cloud security: encryption, monitoring and access control.</li><li>Automation, ETL processes and multi-region data storage.</li></ul></details>
+          </article>
         </li>
-        <li>
-          <div class="meta"><span class="hash">e04d7f3</span>2018 — 2020</div>
-          <h3>IoT research and smart wearables</h3>
-          <ul>
-            <li>Master's thesis on smart wearables, plus test automation and data generation for IoT analytics as a working student.</li>
-          </ul>
+        <li class="job" data-areas="iot embedded cloud security">
+          <div class="job-when"><span class="job-period">2018 — 2020</span><span class="job-dur">2.5 yrs</span></div>
+          <article class="job-card">
+            <h3>IoT research and smart wearables</h3>
+            <p>Master&#x27;s thesis on smart wearables, plus IoT analytics work as a working student.</p>
+            <ul class="tags"><li class="tag area-chip" data-chip="iot">IoT &amp; sensors</li><li class="tag area-chip" data-chip="embedded">embedded &amp; networking</li><li class="tag area-chip" data-chip="cloud">cloud &amp; AWS</li><li class="tag area-chip" data-chip="security">security</li></ul>
+            <details><summary>more</summary><ul><li>Built a jacket with hand-gesture controls from textile capacitive sensors.</li><li>Automated test reporting and generated sensor data to test cloud applications.</li></ul></details>
+          </article>
         </li>
-        <li>
-          <div class="meta"><span class="hash">9d1a6be</span>2015 — 2018</div>
-          <h3>Router software and device management</h3>
-          <ul>
-            <li>Software for OpenWRT-based routers, a TR-069 client, and microservices for remote device management on AWS.</li>
-          </ul>
+        <li class="job" data-areas="embedded iot cloud integration">
+          <div class="job-when"><span class="job-period">2015 — 2018</span><span class="job-dur">3 yrs</span></div>
+          <article class="job-card">
+            <h3>Router software and device management</h3>
+            <p>Software for OpenWRT-based routers and microservices for managing devices remotely.</p>
+            <ul class="tags"><li class="tag area-chip" data-chip="embedded">embedded &amp; networking</li><li class="tag area-chip" data-chip="iot">IoT &amp; sensors</li><li class="tag area-chip" data-chip="cloud">cloud &amp; AWS</li><li class="tag area-chip" data-chip="integration">integration &amp; APIs</li></ul>
+            <details><summary>more</summary><ul><li>Router features (WLAN, WAN, firewall, routing) in Lua, LuCI and shell.</li><li>Enhanced a TR-069 client and automated data-model code generation with Python.</li><li>Microservices with JWT auth, Jenkins builds and Docker on AWS.</li></ul></details>
+          </article>
         </li>
       </ol>
 

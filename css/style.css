@@ -459,3 +459,76 @@ section[id] { scroll-margin-top: 64px; }
   .arch svg { min-width: 640px; }
   .arch figcaption::before { content: "← swipe to see the whole diagram → "; display: block; font-family: var(--mono); font-size: 0.75rem; margin-bottom: 4px; }
 }
+
+/* ---------- Career map ---------- */
+
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.skillmap {
+  margin: 8px 0 28px; background: var(--bg-soft); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px 16px 12px;
+}
+.skillmap-cap { font-family: var(--mono); font-size: 0.82rem; margin-bottom: 12px; color: var(--text); }
+.skillmap-cap .prompt { color: var(--accent); }
+.skillmap-scroll { overflow-x: auto; }
+.skillmap-grid { border-collapse: separate; border-spacing: 4px; font-family: var(--mono); font-size: 0.72rem; }
+.skillmap-grid thead th { color: var(--text-dim); font-weight: 400; text-align: center; padding-bottom: 2px; }
+.skillmap-grid tbody th { text-align: right; padding-right: 8px; white-space: nowrap; font-weight: 400; }
+.skillmap-grid td { width: 26px; min-width: 26px; height: 18px; border-radius: 4px; }
+.area-btn {
+  font: inherit; color: var(--text-dim); background: none; border: 0; padding: 2px 4px;
+  border-radius: 4px; cursor: pointer;
+}
+.area-btn:hover { color: var(--text); }
+.area-btn[aria-pressed="true"] { color: var(--accent); background: var(--bg-elev); }
+
+/* green scale that works in both themes */
+.lvl-0 { background: var(--bg-elev); outline: 1px solid var(--border); outline-offset: -1px; }
+.lvl-1 { background: color-mix(in srgb, var(--accent) 28%, var(--bg-elev)); }
+.lvl-2 { background: color-mix(in srgb, var(--accent) 58%, var(--bg-elev)); }
+.lvl-3 { background: var(--accent); }
+.skillmap.filtering tbody tr:not(.active) td { opacity: 0.25; }
+.skillmap.filtering tbody tr:not(.active) .area-btn { opacity: 0.6; }
+
+.skillmap-legend { display: flex; align-items: center; justify-content: flex-end; gap: 4px; margin-top: 8px; font-family: var(--mono); font-size: 0.7rem; color: var(--text-dim); }
+.skillmap-legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+.filter-status { font-family: var(--mono); font-size: 0.8rem; margin: 10px 0 0; color: var(--text-dim); }
+.filter-status [data-filter-label] { color: var(--text); }
+.btn-sm { padding: 3px 10px; font-size: 0.75rem; margin-left: 6px; }
+
+/* role cards */
+.jobs { list-style: none; margin: 0; padding: 0; position: relative; }
+.jobs::before {
+  content: ""; position: absolute; left: 118px; top: 8px; bottom: 8px; width: 2px; background: var(--border);
+}
+.job { display: grid; grid-template-columns: 104px 1fr; gap: 28px; margin-bottom: 16px; position: relative; transition: opacity .2s; }
+.job::before {
+  content: ""; position: absolute; left: 112px; top: 20px; width: 14px; height: 14px; border-radius: 50%;
+  background: var(--bg); border: 2px solid var(--accent);
+}
+.job-current::before { background: var(--accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 25%, transparent); }
+.job-when { text-align: right; padding-top: 14px; font-family: var(--mono); display: flex; flex-direction: column; gap: 2px; }
+.job-period { font-size: 0.8rem; color: var(--text); }
+.job-dur { font-size: 0.72rem; color: var(--text-dim); }
+.job-card {
+  background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 14px 16px; transition: border-color .15s;
+}
+.job-card:hover { border-color: var(--accent); }
+.job-card h3 { margin: 0 0 6px; font-size: 1rem; }
+.job-card p { margin: 0 0 10px; color: var(--text-dim); font-size: 0.95rem; }
+.job-card .tag { font-size: 0.72rem; padding: 2px 8px; }
+.job-card .tag.hit { border-color: var(--accent); color: var(--accent); }
+.job-card details { margin-top: 10px; }
+.job-card summary { font-family: var(--mono); font-size: 0.8rem; color: var(--accent); cursor: pointer; width: fit-content; }
+.job-card summary::marker { color: var(--accent); }
+.job-card details ul { margin: 8px 0 0; padding-left: 18px; color: var(--text-dim); font-size: 0.92rem; }
+.jobs.filtering .job:not(.match) { opacity: 0.3; }
+
+@media (max-width: 640px) {
+  .jobs::before { left: 6px; }
+  .job { grid-template-columns: 1fr; gap: 6px; padding-left: 28px; }
+  .job::before { left: 0; top: 4px; }
+  .job-when { text-align: left; flex-direction: row; gap: 10px; padding-top: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .job, .job-card { transition: none; } }

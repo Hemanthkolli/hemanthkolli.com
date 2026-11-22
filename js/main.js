@@ -142,6 +142,43 @@
     wrap.appendChild(btn);
   });
 
+  // ---- Career map: click an area to highlight matching roles ----
+  const map = document.querySelector(".skillmap");
+  const roleList = document.querySelector(".jobs");
+  if (map && roleList) {
+    const areaBtns = [...map.querySelectorAll("[data-filter-area]")];
+    const status = map.querySelector("[data-filter-status]");
+    const label = map.querySelector("[data-filter-label]");
+    const apply = (area) => {
+      areaBtns.forEach((b) => {
+        const on = b.dataset.filterArea === area;
+        b.setAttribute("aria-pressed", String(on));
+        b.closest("tr").classList.toggle("active", on);
+      });
+      map.classList.toggle("filtering", !!area);
+      roleList.classList.toggle("filtering", !!area);
+      let n = 0;
+      roleList.querySelectorAll(".job").forEach((r) => {
+        const hit = !!area && r.dataset.areas.split(" ").includes(area);
+        r.classList.toggle("match", hit);
+        if (hit) n++;
+        r.querySelectorAll(".area-chip").forEach((c) => c.classList.toggle("hit", c.dataset.chip === area));
+      });
+      if (status) {
+        status.hidden = !area;
+        if (area) {
+          const name = areaBtns.find((b) => b.dataset.filterArea === area).textContent;
+          label.textContent = `grep "${name}": ${n} of ${roleList.children.length} roles`;
+        }
+      }
+    };
+    areaBtns.forEach((b) => {
+      b.setAttribute("aria-pressed", "false");
+      b.addEventListener("click", () => apply(b.getAttribute("aria-pressed") === "true" ? null : b.dataset.filterArea));
+    });
+    map.querySelector("[data-filter-clear]")?.addEventListener("click", () => apply(null));
+  }
+
   // ---- Footer year ----
   const y = document.querySelector("[data-year]");
   if (y) y.textContent = new Date().getFullYear();
