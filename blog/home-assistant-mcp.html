@@ -45,6 +45,47 @@
       <h1 style="margin-top:20px">From a Raspberry Pi to an AI agent: how I connected my home with MCP</h1>
       <p class="meta"><time datetime="2026-11-23">23 Nov 2026</time> · 6 min read · #mcp #homeassistant #aiagents #typescript #smarthome</p>
 
+      <figure class="ill">
+        <div class="ill-panel">
+        <svg viewBox="0 0 720 270" role="img" aria-labelledby="ill-home-t">
+          <title id="ill-home-t">A Raspberry Pi running Home Assistant, connected to a home with lights, heating and plugs, and an AI agent that can talk to it</title>
+          <!-- raspberry pi board -->
+          <rect x="40" y="110" width="170" height="110" rx="10" class="ill-fill-teal"/>
+          <rect x="40" y="110" width="170" height="110" rx="10" class="ill-teal"/>
+          <circle cx="54" cy="124" r="4" class="ill-teal"/><circle cx="196" cy="124" r="4" class="ill-teal"/><circle cx="54" cy="206" r="4" class="ill-teal"/><circle cx="196" cy="206" r="4" class="ill-teal"/>
+          <path class="ill-teal" d="M72 120h112" style="stroke-dasharray:3 4;stroke-width:5"/>
+          <rect x="70" y="146" width="44" height="44" rx="5" class="ill-solid-teal" opacity=".85"/>
+          <rect x="128" y="150" width="30" height="36" rx="4" class="ill-teal"/>
+          <rect x="168" y="150" width="30" height="20" rx="4" class="ill-teal"/>
+          <text x="125" y="248" text-anchor="middle" class="ill-label">Raspberry Pi</text>
+          <text x="125" y="102" text-anchor="middle" class="ill-small ill-t-teal">Home Assistant</text>
+          <!-- agent bubble -->
+          <path class="ill-card" d="M86 22h80a12 12 0 0 1 12 12v24a12 12 0 0 1-12 12h-30l-12 12v-12h-38a12 12 0 0 1-12-12v-24a12 12 0 0 1 12-12z"/>
+          <path class="ill-solid-blue" d="M126 30c2 9 5 12 14 14c-9 2-12 5-14 14c-2-9-5-12-14-14c9-2 12-5 14-14z"/>
+          <text x="196" y="52" class="ill-small ill-t-blue">AI agent, via MCP</text>
+          <!-- connection -->
+          <path class="ill-path" d="M214 165 C280 165, 300 165, 360 165"/>
+          <circle cx="287" cy="165" r="5" class="ill-solid-gold"/>
+          <!-- house -->
+          <path class="ill-card" d="M370 130l150-96l150 96v110a10 10 0 0 1-10 10h-280a10 10 0 0 1-10-10z"/>
+          <path class="ill-ink" d="M356 136l164-106l164 106"/>
+          <!-- rooms -->
+          <circle cx="440" cy="180" r="34" class="ill-fill-gold"/>
+          <path class="ill-gold" d="M440 162a13 13 0 0 1 8 23v5h-16v-5a13 13 0 0 1 8-23zM434 196h12"/>
+          <circle cx="520" cy="180" r="34" class="ill-fill-blue"/>
+          <circle cx="520" cy="180" r="18" class="ill-blue"/>
+          <path class="ill-blue" d="M520 180l8-8"/>
+          <text x="520" y="232" text-anchor="middle" class="ill-small">heating</text>
+          <circle cx="600" cy="180" r="34" class="ill-fill-teal"/>
+          <rect x="586" y="166" width="28" height="28" rx="6" class="ill-teal"/>
+          <path class="ill-teal" d="M595 176v6M605 176v6"/>
+          <text x="440" y="232" text-anchor="middle" class="ill-small">lights</text>
+          <text x="600" y="232" text-anchor="middle" class="ill-small">plugs</text>
+        </svg>
+        </div>
+        <figcaption>One small computer, one open-source platform, every device in one place.</figcaption>
+      </figure>
+
       <p>It started with a tip from my brother: <strong>Home Assistant</strong>, a free, open-source platform that brings all your smart devices together in one place, no matter which brand they come from.</p>
 
       <p>That tip solved a real problem. Smart devices from different brands usually come with their own app, and the hubs that bring them together are often paid or only work with some brands. You end up with several apps to manage one home, which makes life more difficult instead of easier. Home Assistant costs nothing and works across brands.</p>
@@ -52,6 +93,15 @@
       <p>I was curious, had a Raspberry Pi, and gave it a try.</p>
 
       <p>This is the story of how that small experiment grew into something I now use every week: an AI agent that can understand and manage my home through <strong>MCP</strong>, the Model Context Protocol.</p>
+
+      <div class="note note-key">
+        <span class="note-label">In short</span>
+        <ul>
+          <li>Home Assistant on a Raspberry Pi brings all my devices into one free app.</li>
+          <li>A small MCP server (about 600 lines of TypeScript) lets an AI agent read and manage it.</li>
+          <li>It's off by default, the token stays local, and every change waits for my yes.</li>
+        </ul>
+      </div>
 
       <h2>Step 1: Home Assistant on a Raspberry Pi</h2>
       <p>The first version was simple. I installed Home Assistant on the Raspberry Pi and added my devices one by one. After a while I had dashboards, a few automations, and a lot of devices with names like <code>light.living_room_2</code>.</p>
@@ -94,8 +144,65 @@
 
       <p>The agent never talks to Home Assistant directly. It only sees these tools and their descriptions, and the MCP server does the actual calls.</p>
 
+      <figure class="ill">
+        <div class="ill-panel ill-scroll">
+        <svg viewBox="0 28 720 168" role="img" aria-labelledby="ill-flow-t">
+          <title id="ill-flow-t">You talk to the AI agent, the agent calls tools on the MCP server, and the MCP server calls Home Assistant, which controls the devices</title>
+          <defs><marker id="ill-flow-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1L8 5L1 9" class="ill-arrow"/></marker></defs>
+          <rect x="12" y="56" width="112" height="64" rx="12" class="ill-card"/>
+          <text x="68" y="94" text-anchor="middle" class="ill-text">You</text>
+          <path d="M128 88h34" class="ill-arrow" marker-end="url(#ill-flow-a)"/>
+          <rect x="166" y="56" width="128" height="64" rx="12" class="ill-fill-blue"/>
+          <rect x="166" y="56" width="128" height="64" rx="12" class="ill-blue"/>
+          <text x="230" y="94" text-anchor="middle" class="ill-text ill-t-blue">AI agent</text>
+          <path d="M298 88h34" class="ill-arrow" marker-end="url(#ill-flow-a)"/>
+          <rect x="336" y="46" width="136" height="84" rx="12" class="ill-fill-teal"/>
+          <rect x="336" y="46" width="136" height="84" rx="12" class="ill-teal"/>
+          <text x="404" y="82" text-anchor="middle" class="ill-text ill-t-teal">MCP server</text>
+          <text x="404" y="104" text-anchor="middle" class="ill-small">20 tools</text>
+          <path d="M476 88h34" class="ill-arrow" marker-end="url(#ill-flow-a)"/>
+          <rect x="514" y="56" width="128" height="64" rx="12" class="ill-card"/>
+          <text x="578" y="84" text-anchor="middle" class="ill-text">Home</text>
+          <text x="578" y="102" text-anchor="middle" class="ill-text">Assistant</text>
+          <path d="M646 88h20" class="ill-arrow" marker-end="url(#ill-flow-a)"/>
+          <circle cx="690" cy="72" r="9" class="ill-fill-gold"/><circle cx="690" cy="104" r="9" class="ill-fill-blue"/>
+          <circle cx="690" cy="72" r="9" class="ill-gold"/><circle cx="690" cy="104" r="9" class="ill-blue"/>
+          <text x="404" y="160" text-anchor="middle" class="ill-small">REST + WebSocket, token stays on my machine</text>
+          <path d="M126 140c30 26 60 26 90 0" class="ill-gold" style="stroke-dasharray:4 5" />
+          <text x="171" y="180" text-anchor="middle" class="ill-small ill-t-gold">asks before changes</text>
+        </svg>
+        </div>
+        <figcaption>The agent only sees the tools. The MCP server does the real calls.</figcaption>
+      </figure>
+
       <h2>A real example: heating</h2>
       <p>Heating is where this helps me most. My rooms have their own smart thermostats, and managing them used to mean opening each one, checking temperatures and adjusting schedules by hand.</p>
+
+      <figure class="ill">
+        <div class="ill-panel">
+        <svg viewBox="0 0 720 230" role="img" aria-labelledby="ill-heat-t">
+          <title id="ill-heat-t">A thermostat set to 21 degrees in the office, and a line chart of the bedroom temperature over the last day</title>
+          <!-- dial -->
+          <circle cx="150" cy="112" r="78" class="ill-ring"/>
+          <path d="M95 167A78 78 0 1 1 205 167" fill="none" stroke="var(--border)" stroke-width="10" stroke-linecap="round" transform="translate(0 -2) scale(1)" />
+          <path d="M95 167A78 78 0 0 1 196 52" fill="none" stroke="var(--secondary)" stroke-width="10" stroke-linecap="round"/>
+          <circle cx="196" cy="52" r="8" class="ill-solid-gold"/>
+          <text x="150" y="122" text-anchor="middle" class="ill-big">21°</text>
+          <text x="150" y="148" text-anchor="middle" class="ill-small">OFFICE</text>
+          <!-- chart -->
+          <rect x="290" y="24" width="400" height="180" rx="14" class="ill-card"/>
+          <text x="312" y="54" class="ill-small">BEDROOM · LAST 24 H</text>
+          <path d="M312 150h356M312 115h356M312 80h356" stroke="var(--border)" stroke-width="1" stroke-dasharray="3 5"/>
+          <path class="ill-fill-blue" d="M312 140C340 138 360 146 390 144S440 120 470 104S520 92 550 96S610 120 640 118L668 112V178H312Z" opacity=".7"/>
+          <path class="ill-blue" d="M312 140C340 138 360 146 390 144S440 120 470 104S520 92 550 96S610 120 640 118L668 112"/>
+          <circle cx="668" cy="112" r="5" class="ill-solid-blue"/>
+          <text x="312" y="194" class="ill-small">00:00</text>
+          <text x="490" y="194" text-anchor="middle" class="ill-small">12:00</text>
+          <text x="668" y="194" text-anchor="end" class="ill-small">now</text>
+        </svg>
+        </div>
+        <figcaption>Plain questions, clear answers: one target temperature, and how a room really behaved.</figcaption>
+      </figure>
 
       <p>Now I can simply ask:</p>
       <ul>
@@ -138,6 +245,11 @@
         <li><strong>Python, official:</strong> the <a href="https://github.com/modelcontextprotocol/python-sdk">official Python SDK</a>.</li>
         <li><strong>Testing:</strong> the <a href="https://github.com/modelcontextprotocol/inspector">MCP Inspector</a> lets you try your tools before you connect an agent.</li>
       </ul>
+
+      <div class="note">
+        <span class="note-label">Tip</span>
+        <p>Start read-only. Give the agent only the tools that read your home first, and add the ones that change things once you trust how it behaves.</p>
+      </div>
 
       <h2>Closing thought</h2>
       <p>What started with a tip from my brother and a spare Raspberry Pi became my favourite way to learn how AI agents and integrations work together. I'm still learning, and I'm sure there are better ways to do parts of this.</p>

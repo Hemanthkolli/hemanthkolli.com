@@ -49,6 +49,42 @@
         per decision.
       </p>
 
+      <figure class="ill">
+        <div class="ill-panel">
+        <svg viewBox="0 0 720 300" role="img" aria-labelledby="ill-adr-t">
+          <title id="ill-adr-t">A stack of decision records, the top one accepted, next to the lifecycle Proposed, Accepted, Superseded</title>
+          <defs><marker id="ill-adr-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1L8 5L1 9" class="ill-arrow"/></marker></defs>
+          <rect x="76" y="16" width="290" height="220" rx="14" class="ill-card" opacity=".45"/>
+          <rect x="58" y="32" width="290" height="220" rx="14" class="ill-card" opacity=".7"/>
+          <rect x="40" y="48" width="290" height="226" rx="14" class="ill-card"/>
+          <text x="64" y="84" class="ill-small">ADR-0007</text>
+          <text x="64" y="114" class="ill-title">Use AWS CDK for new stacks</text>
+          <rect x="64" y="130" width="92" height="26" rx="13" class="ill-fill-teal"/>
+          <circle cx="80" cy="143" r="4" class="ill-solid-teal"/>
+          <text x="91" y="147.5" class="ill-small ill-t-teal">Accepted</text>
+          <text x="64" y="190" class="ill-small">CONTEXT</text><rect x="168" y="183" width="136" height="7" rx="3.5" class="ill-bar"/>
+          <text x="64" y="218" class="ill-small">DECISION</text><rect x="168" y="211" width="108" height="7" rx="3.5" class="ill-bar"/>
+          <text x="64" y="246" class="ill-small">CONSEQUENCES</text><rect x="168" y="239" width="122" height="7" rx="3.5" class="ill-bar"/>
+
+          <text x="420" y="58" class="ill-small">LIFECYCLE</text>
+          <rect x="420" y="74" width="150" height="38" rx="19" class="ill-card"/>
+          <text x="495" y="98" text-anchor="middle" class="ill-text">Proposed</text>
+          <path d="M495 116v30" class="ill-arrow" marker-end="url(#ill-adr-a)"/>
+          <rect x="420" y="152" width="150" height="38" rx="19" class="ill-fill-teal"/>
+          <rect x="420" y="152" width="150" height="38" rx="19" class="ill-teal"/>
+          <text x="495" y="176" text-anchor="middle" class="ill-text ill-t-teal">Accepted</text>
+          <path d="M495 194v30" class="ill-arrow" marker-end="url(#ill-adr-a)"/>
+          <rect x="420" y="230" width="150" height="38" rx="19" class="ill-card" stroke-dasharray="5 4"/>
+          <text x="495" y="254" text-anchor="middle" class="ill-text" opacity=".6">Superseded</text>
+          <text x="584" y="98" class="ill-small">discuss</text>
+          <text x="584" y="176" class="ill-small">build on it</text>
+          <text x="584" y="248" class="ill-small ill-t-gold">replace,</text>
+          <text x="584" y="264" class="ill-small ill-t-gold">never edit</text>
+        </svg>
+        </div>
+        <figcaption>One short record per decision. When things change, a new record replaces the old one.</figcaption>
+      </figure>
+
       <h2>The format I use</h2>
       <pre><code># ADR-0007: Use AWS CDK for new platform stacks
 
@@ -63,6 +99,11 @@ What we chose, in one or two sentences.
 
 ## Consequences
 What gets easier, what gets harder, what we must watch.</code></pre>
+
+      <div class="note">
+        <span class="note-label">Tip</span>
+        <p>Keep the records next to the code, for example in <code>docs/adr/</code>. Then a new decision gets reviewed in the same pull request as the change it explains.</p>
+      </div>
 
       <h2>What makes a good ADR</h2>
       <ul>

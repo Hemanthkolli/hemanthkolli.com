@@ -488,6 +488,50 @@ section.block.alt { background: var(--bg-soft); border-block: 1px solid var(--bo
 .checklist li { padding-left: 32px; position: relative; margin: 8px 0; }
 .checklist li::before { content: ""; position: absolute; left: 0; top: 5px; width: 18px; height: 18px; border-radius: 5px; border: 2px solid var(--secondary); }
 
+/* ---------- Illustrations & notes (blog) ---------- */
+.ill { margin: 28px 0 32px; }
+.ill svg { width: 100%; height: auto; display: block; }
+.ill-panel { background: linear-gradient(160deg, var(--surface), var(--bg-soft)); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 14px; }
+.ill figcaption { color: var(--muted); font-size: 0.9rem; margin-top: 10px; text-align: center; font-style: italic; }
+.ill-card { fill: var(--surface); stroke: var(--border-strong); stroke-width: 1.5; }
+.ill-ring { fill: var(--surface); stroke: var(--border); stroke-width: 1.5; }
+.ill-path { fill: none; stroke: var(--border-strong); stroke-width: 2; stroke-dasharray: 2 7; stroke-linecap: round; }
+.ill-arrow { fill: none; stroke: var(--muted); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.ill-bar { fill: var(--border); }
+.ill-blue { fill: none; stroke: var(--primary); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ill-teal { fill: none; stroke: var(--secondary); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ill-gold { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ill-ink { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ill-fill-blue { fill: color-mix(in srgb, var(--primary) 14%, transparent); }
+.ill-fill-teal { fill: color-mix(in srgb, var(--secondary) 16%, transparent); }
+.ill-fill-gold { fill: color-mix(in srgb, var(--accent) 18%, transparent); }
+.ill-solid-blue { fill: var(--primary); }
+.ill-solid-teal { fill: var(--secondary); }
+.ill-solid-gold { fill: var(--accent); }
+.ill-label { fill: var(--muted); font-family: var(--mono); font-size: 14px; letter-spacing: 0.04em; }
+.ill-small { fill: var(--muted); font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; }
+.ill-title { fill: var(--ink); font-family: var(--serif); font-size: 19px; }
+.ill-big { fill: var(--ink); font-family: var(--serif); font-size: 34px; }
+.ill-text { fill: var(--ink); font-family: var(--sans); font-size: 14px; font-weight: 500; }
+.ill-t-teal { fill: var(--secondary); }
+.ill-t-gold { fill: var(--accent); }
+.ill-t-blue { fill: var(--primary); }
+@media (max-width: 640px) {
+  .ill-scroll { overflow-x: auto; }
+  .ill-scroll svg { min-width: 600px; }
+  .ill-label { font-size: 19px; }
+  .ill-panel { padding: 12px 6px; }
+}
+
+.note { position: relative; margin: 26px 0; padding: 16px 20px 16px 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); box-shadow: var(--shadow-sm); }
+.note::before { content: ""; position: absolute; left: 0; top: 14px; bottom: 14px; width: 3px; border-radius: 0 3px 3px 0; background: var(--secondary); }
+.note-label { display: block; font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--secondary); margin-bottom: 4px; }
+.note p, .note ul { margin: 0; }
+.note ul { padding-left: 20px; }
+.note-key::before { background: var(--accent); }
+.note-key .note-label { color: var(--accent); }
+.note-key { background: linear-gradient(160deg, var(--surface), var(--bg-soft)); }
+
 /* ---------- 404 ---------- */
 .notfound { padding: 120px 0 40px; }
 .notfound .big { font-family: var(--serif); font-size: clamp(4rem, 14vw, 8rem); line-height: 1; color: var(--primary); margin: 0; }
