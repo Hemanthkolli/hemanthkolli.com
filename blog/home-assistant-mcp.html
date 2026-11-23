@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>From a Raspberry Pi to an AI agent: how I connected my home with MCP · Hemanth Kolli</title>
+  <meta name="description" content="How a tip from my brother turned into Home Assistant on a Raspberry Pi, and later into a small MCP server that lets an AI agent help run it.">
+  <link rel="canonical" href="https://hemanthkolli.com/blog/home-assistant-mcp.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="From a Raspberry Pi to an AI agent: how I connected my home with MCP">
+  <meta property="og:description" content="How a tip from my brother turned into Home Assistant on a Raspberry Pi, and later into a small MCP server that lets an AI agent help run it.">
+  <meta property="og:url" content="https://hemanthkolli.com/blog/home-assistant-mcp.html">
+  <meta property="og:image" content="https://hemanthkolli.com/images/hemanth-400.jpg">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230b1f3a'/><text x='16' y='21.5' text-anchor='middle' font-family='Georgia,serif' font-size='15' font-weight='600' fill='%23e2b865'>hk</text></svg>">
+  <meta name="theme-color" content="#0b1f3a">
+  <script>document.documentElement.classList.add("js");try{var t=localStorage.getItem("theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <nav class="nav container" aria-label="Main">
+      <a class="logo" href="/" aria-label="Hemanth Kolli, home"><img class="avatar" src="/images/hemanth-128.jpg" alt="" width="36" height="36"><span class="logo-name">Hemanth Kolli</span></a>
+      <div class="nav-right">
+        <ul class="nav-links">
+          <li><a href="/#approach">Approach</a></li>
+          <li><a href="/#about">About</a></li>
+          <li><a href="/#experience">Experience</a></li>
+          <li><a href="/#work">Work</a></li>
+          <li><a href="/blog/" aria-current="page">Writing</a></li>
+        </ul>
+        <a class="btn primary nav-cta" href="/#contact">Get in touch</a>
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Toggle theme"></button>
+        <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-label="Open menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+      </div>
+    </nav>
+  </header>
+  <main id="main">
+    <article class="article">
+      <a class="back" href="./">← All notes</a>
+      <h1 style="margin-top:20px">From a Raspberry Pi to an AI agent: how I connected my home with MCP</h1>
+      <p class="meta"><time datetime="2026-11-23">23 Nov 2026</time> · 6 min read · #mcp #homeassistant #aiagents #typescript #smarthome</p>
+
+      <p>It started with a tip from my brother: <strong>Home Assistant</strong>, a free, open-source platform that brings all your smart devices together in one place, no matter which brand they come from.</p>
+
+      <p>That tip solved a real problem. Smart devices from different brands usually come with their own app, and the hubs that bring them together are often paid or only work with some brands. You end up with several apps to manage one home, which makes life more difficult instead of easier. Home Assistant costs nothing and works across brands.</p>
+
+      <p>I was curious, had a Raspberry Pi, and gave it a try.</p>
+
+      <p>This is the story of how that small experiment grew into something I now use every week: an AI agent that can understand and manage my home through <strong>MCP</strong>, the Model Context Protocol.</p>
+
+      <h2>Step 1: Home Assistant on a Raspberry Pi</h2>
+      <p>The first version was simple. I installed Home Assistant on the Raspberry Pi and added my devices one by one. After a while I had dashboards, a few automations, and a lot of devices with names like <code>light.living_room_2</code>.</p>
+
+      <p>It worked well, and it still runs on that same Pi today. But managing it still meant clicking through screens, writing YAML for automations, and keeping names and rooms tidy by hand. That last part I kept postponing.</p>
+
+      <h2>Step 2: Asking "what if I could just ask?"</h2>
+      <p>At the same time, I was learning more about AI agents in my free time. The question came naturally:</p>
+
+      <blockquote>What if I could just ask <em>"Create a dashboard for me"</em> and have it done?</blockquote>
+
+      <p>One of the first things I asked the agent was exactly that, and it built a dashboard for me after I approved the change.</p>
+
+      <p>That is exactly the problem MCP solves.</p>
+
+      <h2>What is MCP, in one paragraph</h2>
+      <p>The <strong>Model Context Protocol</strong> is an open standard for connecting AI agents to tools and data. An application describes what it can do as a set of <em>tools</em>, each with a name, a description and its inputs. Any agent that speaks MCP can discover these tools and use them when they fit the goal. Instead of writing one integration per agent, you write one MCP server, and every MCP-capable agent can use it.</p>
+
+      <h2>Step 3: Building a small MCP server for Home Assistant</h2>
+      <p>I built a small MCP server in <strong>TypeScript</strong> using the official MCP SDK. It is around 600 lines of code and talks to Home Assistant through two of its interfaces:</p>
+      <ul>
+        <li>the <strong>REST API</strong> for states, services and history</li>
+        <li>the <strong>WebSocket API</strong> for configuration, such as the device, entity and area registries</li>
+      </ul>
+
+      <p>It gives the agent <strong>20 tools</strong>, grouped roughly like this:</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Area</th><th>What the agent can do</th></tr></thead>
+          <tbody>
+            <tr><td>Reading the home</td><td>List states, look at a single device, read history, render templates</td></tr>
+            <tr><td>Controlling devices</td><td>Call services, for example turning lights, switches or scenes on and off</td></tr>
+            <tr><td>Automations</td><td>List, read, create, update, enable/disable and delete automations</td></tr>
+            <tr><td>Dashboards</td><td>List, read, create and update dashboards</td></tr>
+            <tr><td>Tidying up</td><td>Rename entities and devices, organise areas and floors</td></tr>
+            <tr><td>Notifications</td><td>Send a notification to my phone</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>The agent never talks to Home Assistant directly. It only sees these tools and their descriptions, and the MCP server does the actual calls.</p>
+
+      <h2>A real example: heating</h2>
+      <p>Heating is where this helps me most. My rooms have their own smart thermostats, and managing them used to mean opening each one, checking temperatures and adjusting schedules by hand.</p>
+
+      <p>Now I can simply ask:</p>
+      <ul>
+        <li><em>"What's the temperature in each room right now?"</em> The agent reads the thermostats and sensors and gives me one overview.</li>
+        <li><em>"How warm was the bedroom over the last day?"</em> It looks at the history, so I can see if a room heats up too slowly or too much.</li>
+        <li><em>"Set the office to 21 °C."</em> It calls the right climate service for that thermostat.</li>
+        <li><em>"Turn the heating off automatically when the heating season ends."</em> It writes the automation for me, shows it, and only saves it after I approve.</li>
+        <li><em>"Build me a heating dashboard."</em> All rooms, temperatures and target settings on one screen.</li>
+      </ul>
+
+      <p>What I like most is that I describe <em>what</em> I want in plain words. The agent figures out <em>which</em> devices, services and automation rules that means. I still decide, because every change waits for my yes.</p>
+
+      <h2>Security, kept simple</h2>
+      <p>Giving an agent access to your home deserves some care. I kept it simple:</p>
+      <ul>
+        <li><strong>Off by default.</strong> A small script switches the MCP server on for a few hours and turns it off again automatically. When I'm not using it, the agent has no access at all.</li>
+        <li><strong>The token stays local.</strong> The Home Assistant access token lives in a local file on my machine. It never goes into a chat or a prompt.</li>
+        <li><strong>I stay in the loop.</strong> The agent always asks for my approval before it changes anything, so I can say yes or no.</li>
+      </ul>
+
+      <p>None of this is complicated, but it makes a big difference to how comfortable I feel using it.</p>
+
+      <h2>What I learned</h2>
+      <p><strong>The MCP part was the easy part.</strong> The SDK does most of the protocol work. The real effort went into writing clear tool names and descriptions, so the agent picks the right tool the first time.</p>
+
+      <p><strong>Good error messages matter.</strong> When a tool fails, the agent reads the error. A clear message such as <em>"this entity has its own area, so its name can't be cleared"</em> lets it correct itself instead of guessing.</p>
+
+      <p><strong>Boring jobs become easy.</strong> Renaming devices and sorting them into the right rooms, the job I had postponed for months, became a single conversation.</p>
+
+      <p><strong>Small is fine.</strong> You don't need a big platform to learn MCP. One small server for something you use every day teaches you most of the concepts.</p>
+
+      <h2>Want to try it yourself?</h2>
+      <p>The code is open source, so you can use it and change it for your own home: <strong><a href="https://github.com/Hemanthkolli/home-assistant-agent-mcp">Hemanthkolli/home-assistant-agent-mcp</a></strong> (MIT licence).</p>
+
+      <p>You also don't have to start from my code. A few other good starting points:</p>
+      <ul>
+        <li><strong>No code:</strong> Home Assistant now has a built-in <a href="https://www.home-assistant.io/integrations/mcp_server/">MCP Server integration</a>.</li>
+        <li><strong>Python:</strong> <a href="https://gofastmcp.com">FastMCP</a> lets you define a tool in a few lines.</li>
+        <li><strong>TypeScript:</strong> the <a href="https://github.com/modelcontextprotocol/typescript-sdk">official TypeScript SDK</a>, which is what I used.</li>
+        <li><strong>Python, official:</strong> the <a href="https://github.com/modelcontextprotocol/python-sdk">official Python SDK</a>.</li>
+        <li><strong>Testing:</strong> the <a href="https://github.com/modelcontextprotocol/inspector">MCP Inspector</a> lets you try your tools before you connect an agent.</li>
+      </ul>
+
+      <h2>Closing thought</h2>
+      <p>What started with a tip from my brother and a spare Raspberry Pi became my favourite way to learn how AI agents and integrations work together. I'm still learning, and I'm sure there are better ways to do parts of this.</p>
+
+      <p>If you've connected your own home or tools to an agent, I'd love to hear how you did it.</p>
+
+      <p><em>P.S. Yes, an AI helped me write this. The ideas and the project are mine, the agent did the typing. 🤖</em></p>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <span>© <span data-year>2026</span> Hemanth Kolli Kannaiah</span>
+      <span><a href="https://www.linkedin.com/in/hemanthkolli" rel="me">LinkedIn</a> · <a href="https://github.com/Hemanthkolli" rel="me">GitHub</a> · <a href="#main">Back to top ↑</a></span>
+    </div>
+  </footer>
+  <script src="/js/main.js" defer></script>
+</body>
+</html>

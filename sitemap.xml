@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://hemanthkolli.com/</loc><lastmod>2026-11-22</lastmod></url>
-  <url><loc>https://hemanthkolli.com/blog/</loc><lastmod>2026-11-22</lastmod></url>
+  <url><loc>https://hemanthkolli.com/</loc><lastmod>2026-11-23</lastmod></url>
+  <url><loc>https://hemanthkolli.com/blog/</loc><lastmod>2026-11-23</lastmod></url>
   <url><loc>https://hemanthkolli.com/blog/hello-world.html</loc><lastmod>2026-11-22</lastmod></url>
   <url><loc>https://hemanthkolli.com/blog/why-adrs.html</loc><lastmod>2026-11-22</lastmod></url>
   <url><loc>https://hemanthkolli.com/blog/ai-agent-backlog.html</loc><lastmod>2026-11-22</lastmod></url>
+  <url><loc>https://hemanthkolli.com/blog/home-assistant-mcp.html</loc><lastmod>2026-11-23</lastmod></url>
 </urlset>
