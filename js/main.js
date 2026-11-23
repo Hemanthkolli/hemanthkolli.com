@@ -11,10 +11,12 @@
     root.getAttribute("data-theme") ||
     (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
 
+  const SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
+  const MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
   const paint = () => {
     if (!toggle) return;
     const t = current();
-    toggle.textContent = t === "dark" ? "☀" : "☾";
+    toggle.innerHTML = t === "dark" ? SUN : MOON;
     toggle.setAttribute("aria-label", t === "dark" ? "Switch to light theme" : "Switch to dark theme");
   };
   paint();
@@ -40,19 +42,12 @@
     }
   });
 
-  // ---- Typing effect for the hero command ----
-  const typed = document.querySelector("[data-type]");
+  // ---- Header border once the page is scrolled ----
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (typed && !reduce) {
-    const text = typed.textContent;
-    typed.textContent = "";
-    let i = 0;
-    const tick = () => {
-      typed.textContent = text.slice(0, ++i);
-      if (i < text.length) setTimeout(tick, 70);
-    };
-    setTimeout(tick, 300);
-  }
+  const headerEl = document.querySelector(".site-header");
+  const onScroll = () => headerEl?.classList.toggle("scrolled", window.scrollY > 8);
+  onScroll();
+  window.addEventListener("scroll", onScroll, { passive: true });
 
   // ---- Reveal on scroll ----
   const els = document.querySelectorAll(".reveal");
