@@ -174,6 +174,41 @@
     map.querySelector("[data-filter-clear]")?.addEventListener("click", () => apply(null));
   }
 
+  // ---- Scroll-spy: highlight the nav tab for the section in view (home page) ----
+  const navMap = new Map();
+  document.querySelectorAll(".nav-links a").forEach((a) => {
+    const id = (a.getAttribute("href") || "").split("#")[1] || (/\/blog\/?$/.test(a.getAttribute("href")) ? "writing" : "");
+    const sec = id && document.getElementById(id);
+    if (sec) navMap.set(sec, a);
+  });
+  // sections without their own tab borrow the closest related one
+  const borrow = { expertise: "about" };
+  Object.entries(borrow).forEach(([child, parent]) => {
+    const c = document.getElementById(child), p = document.getElementById(parent);
+    if (c && p && navMap.has(p)) navMap.set(c, navMap.get(p));
+  });
+  if (navMap.size) {
+    const setActive = (link) => navMap.forEach((a) => {
+      const on = a === link;
+      a.classList.toggle("active", on);
+      if (on) a.setAttribute("aria-current", "location"); else if (a.getAttribute("aria-current") === "location") a.removeAttribute("aria-current");
+    });
+    const spy = () => {
+      const line = 120; // just below the sticky header
+      let current = null;
+      navMap.forEach((a, sec) => {
+        const r = sec.getBoundingClientRect();
+        if (r.top <= line && r.bottom > line) current = a;
+      });
+      // at the very bottom, the last section wins
+      if (!current && window.innerHeight + window.scrollY >= document.body.scrollHeight - 4) current = [...navMap.values()].pop();
+      setActive(current);
+    };
+    spy();
+    window.addEventListener("scroll", spy, { passive: true });
+    window.addEventListener("resize", spy);
+  }
+
   // ---- Footer year ----
   const y = document.querySelector("[data-year]");
   if (y) y.textContent = new Date().getFullYear();
