@@ -1,46 +1,47 @@
 /* ==========================================================================
-   hemanthkolli.com: premium "trust" theme
-   Navy, blue and teal with a warm gold accent. Serif display, sans body.
+   hemanthkolli.com: warm "sand & terracotta" theme
+   Forest green, terracotta and sage with a mustard accent. Serif display, sans body.
    Light theme follows the OS by default; the toggle overrides it.
    ========================================================================== */
 
 :root {
   /* brand (shared) */
-  --navy-900: #071428;
-  --navy-800: #0b1f3a;
-  --navy-700: #12305a;
-  --blue-600: #1f4fd8;
-  --blue-500: #3b6cf0;
-  --teal-500: #0f9d9a;
-  --teal-400: #2cc2b9;
-  --gold-500: #c79a3b;
-  --gold-400: #e2b865;
+  /* names kept from the first theme; values are now forest / terracotta / sage / mustard */
+  --navy-900: #13261f;   /* deep forest */
+  --navy-800: #1f3b34;
+  --navy-700: #2c5246;
+  --blue-600: #b0532f;   /* terracotta */
+  --blue-500: #c96a43;
+  --teal-500: #2f7a6b;   /* sage teal */
+  --teal-400: #5fae9c;
+  --gold-500: #c08a2e;   /* mustard */
+  --gold-400: #e0b154;
 
   /* light theme tokens */
-  --bg: #f6f8fc;
-  --bg-soft: #eef2f9;
+  --bg: #faf6ef;
+  --bg-soft: #f3ece0;
   --surface: #ffffff;
-  --border: #e1e7f0;
-  --border-strong: #c9d3e3;
-  --ink: #0b1b33;
-  --muted: #55647d;
+  --border: #e8dfd0;
+  --border-strong: #d6c9b4;
+  --ink: #1f2420;
+  --muted: #5f6458;
   --primary: var(--blue-600);
   --secondary: var(--teal-500);
-  --accent: #a87a24;          /* gold, darkened for contrast on light */
+  --accent: #8c6119;          /* mustard, darkened for contrast on light */
   --link: var(--blue-600);
-  --chip-bg: #eef3ff;
-  --chip-ink: #1d3f9e;
-  --selection: rgba(31, 79, 216, 0.16);
-  --shadow-sm: 0 1px 2px rgba(11, 27, 51, 0.06);
-  --shadow: 0 10px 30px -12px rgba(11, 27, 51, 0.18);
-  --shadow-lg: 0 30px 60px -24px rgba(11, 27, 51, 0.28);
-  --code-bg: #0b1f3a;
-  --code-ink: #e6edf8;
+  --chip-bg: #f6e6dc;
+  --chip-ink: #8a3f22;
+  --selection: rgba(176, 83, 47, 0.16);
+  --shadow-sm: 0 1px 2px rgba(31, 36, 32, 0.06);
+  --shadow: 0 10px 30px -12px rgba(31, 36, 32, 0.18);
+  --shadow-lg: 0 30px 60px -24px rgba(31, 36, 32, 0.28);
+  --code-bg: #1f3b34;
+  --code-ink: #eef1ea;
 
   --hero-from: var(--navy-900);
   --hero-via: var(--navy-700);
-  --hero-ink: #f3f6fb;
-  --hero-muted: #b9c6dc;
+  --hero-ink: #f6f1e7;
+  --hero-muted: #c9d1c4;
 
   --serif: "Fraunces", "Iowan Old Style", Georgia, "Times New Roman", serif;
   --sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -54,50 +55,50 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #07111f;
-    --bg-soft: #0b1829;
-    --surface: #0e1d32;
-    --border: #1b2d48;
-    --border-strong: #2a4063;
-    --ink: #e8eef7;
-    --muted: #9badc6;
-    --primary: #7aa6ff;
+    --bg: #0f1714;
+    --bg-soft: #14201b;
+    --surface: #18261f;
+    --border: #24362d;
+    --border-strong: #34493e;
+    --ink: #efeae0;
+    --muted: #a9b2a6;
+    --primary: #e8936e;
     --secondary: var(--teal-400);
     --accent: var(--gold-400);
-    --link: #8db4ff;
-    --chip-bg: #12284a;
-    --chip-ink: #bcd0ff;
-    --selection: rgba(122, 166, 255, 0.25);
+    --link: #eba182;
+    --chip-bg: #2a2420;
+    --chip-ink: #f2c3ab;
+    --selection: rgba(232, 147, 110, 0.25);
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
     --shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.6);
     --shadow-lg: 0 30px 60px -24px rgba(0, 0, 0, 0.7);
-    --code-bg: #050d19;
-    --hero-from: #040b17;
-    --hero-via: #0c2246;
+    --code-bg: #0a110e;
+    --hero-from: #0b1612;
+    --hero-via: #1f3b34;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #07111f;
-  --bg-soft: #0b1829;
-  --surface: #0e1d32;
-  --border: #1b2d48;
-  --border-strong: #2a4063;
-  --ink: #e8eef7;
-  --muted: #9badc6;
-  --primary: #7aa6ff;
+  --bg: #0f1714;
+  --bg-soft: #14201b;
+  --surface: #18261f;
+  --border: #24362d;
+  --border-strong: #34493e;
+  --ink: #efeae0;
+  --muted: #a9b2a6;
+  --primary: #e8936e;
   --secondary: var(--teal-400);
   --accent: var(--gold-400);
-  --link: #8db4ff;
-  --chip-bg: #12284a;
-  --chip-ink: #bcd0ff;
-  --selection: rgba(122, 166, 255, 0.25);
+  --link: #eba182;
+  --chip-bg: #2a2420;
+  --chip-ink: #f2c3ab;
+  --selection: rgba(232, 147, 110, 0.25);
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.6);
   --shadow-lg: 0 30px 60px -24px rgba(0, 0, 0, 0.7);
-  --code-bg: #050d19;
-  --hero-from: #040b17;
-  --hero-via: #0c2246;
+  --code-bg: #0a110e;
+  --hero-from: #0b1612;
+  --hero-via: #1f3b34;
   color-scheme: dark;
 }
 
@@ -198,8 +199,8 @@ code, kbd, pre { font-family: var(--mono); font-size: 0.88em; }
 .hero-band {
   position: relative; isolation: isolate; color: var(--hero-ink);
   background:
-    radial-gradient(900px 480px at 85% -10%, rgba(44, 194, 185, 0.35), transparent 60%),
-    radial-gradient(700px 420px at 10% 110%, rgba(59, 108, 240, 0.45), transparent 60%),
+    radial-gradient(900px 480px at 85% -10%, rgba(95, 174, 156, 0.30), transparent 60%),
+    radial-gradient(700px 420px at 10% 110%, rgba(201, 106, 67, 0.38), transparent 60%),
     linear-gradient(160deg, var(--hero-from), var(--hero-via));
   overflow: hidden;
 }
@@ -350,7 +351,7 @@ section.block.alt { background: var(--bg-soft); border-block: 1px solid var(--bo
 .featured-body p { color: var(--muted); }
 .featured-art {
   position: relative; min-height: 240px; color: #fff; padding: 28px; display: flex; flex-direction: column; justify-content: flex-end; gap: 10px;
-  background: radial-gradient(400px 220px at 80% 10%, rgba(44,194,185,.45), transparent 60%), linear-gradient(150deg, var(--navy-800), var(--blue-600));
+  background: radial-gradient(400px 220px at 80% 10%, rgba(95,174,156,.40), transparent 60%), linear-gradient(150deg, var(--navy-800), var(--blue-600));
 }
 .featured-art .flow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 0.85rem; }
 .featured-art .node { padding: 6px 12px; border-radius: 999px; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.25); }
@@ -381,7 +382,7 @@ section.block.alt { background: var(--bg-soft); border-block: 1px solid var(--bo
 
 .contact-band {
   position: relative; overflow: hidden; border-radius: 24px; padding: 64px 48px; color: var(--hero-ink);
-  background: radial-gradient(600px 300px at 90% 0%, rgba(226,184,101,.28), transparent 60%), radial-gradient(500px 300px at 0% 100%, rgba(44,194,185,.3), transparent 60%), linear-gradient(140deg, var(--navy-900), var(--navy-700));
+  background: radial-gradient(600px 300px at 90% 0%, rgba(224,177,84,.28), transparent 60%), radial-gradient(500px 300px at 0% 100%, rgba(95,174,156,.28), transparent 60%), linear-gradient(140deg, var(--navy-900), var(--navy-700));
   box-shadow: var(--shadow-lg);
 }
 @media (max-width: 600px) { .contact-band { padding: 44px 24px; border-radius: 18px; } }
@@ -452,7 +453,7 @@ section.block.alt { background: var(--bg-soft); border-block: 1px solid var(--bo
 .tabs.js-tabs .tab-fallback { display: none; }
 
 .code-wrap { position: relative; }
-.copy-btn { position: absolute; top: 10px; right: 10px; font: inherit; font-size: 0.72rem; font-weight: 600; background: rgba(255,255,255,0.08); color: #cfdaf0; border: 1px solid rgba(255,255,255,0.18); border-radius: 999px; padding: 3px 10px; cursor: pointer; }
+.copy-btn { position: absolute; top: 10px; right: 10px; font: inherit; font-size: 0.72rem; font-weight: 600; background: rgba(255,255,255,0.08); color: #dfe6dc; border: 1px solid rgba(255,255,255,0.18); border-radius: 999px; padding: 3px 10px; cursor: pointer; }
 .copy-btn:hover { background: rgba(255,255,255,0.16); }
 
 .arch { margin: 24px 0; }
