@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Why I write ADRs · Hemanth Kolli</title>
-  <meta name="description" content="Why Architecture Decision Records are worth the effort.">
+  <meta name="description" content="Why I write a short note for every big software decision, called an ADR, and how it saves my teams time and meetings later.">
   <link rel="canonical" href="https://hemanthkolli.com/blog/why-adrs.html">
   <meta property="og:url" content="https://hemanthkolli.com/blog/why-adrs.html">
   <meta property="og:image" content="https://hemanthkolli.com/images/hemanth-400.jpg">
@@ -42,9 +42,17 @@
 
       <p>
         Six months after a decision, nobody remembers why it was made. The person who made it
-        may have moved on, and the context lives in a meeting nobody recorded. An
-        <strong>Architecture Decision Record</strong> (ADR) fixes that with one short document
-        per decision.
+        may have moved on. The reasons were only spoken out loud, in a meeting nobody wrote down.
+      </p>
+      <p>
+        An <strong>Architecture Decision Record</strong> (ADR) fixes that. It is one short
+        document for each big decision. "Architecture" here means the big-picture design of a
+        software system: which tools we use and how the parts fit together.
+      </p>
+      <p>
+        Think of a ship's log. The crew doesn't note every turn of the wheel. But they do write
+        down each real change of course, and why. Anyone who joins later can read back and see
+        how the ship got where it is.
       </p>
 
       <figure class="ill">
@@ -84,6 +92,10 @@
       </figure>
 
       <h2>The format I use</h2>
+      <p>
+        Every record answers the same four questions. Here is my template, with a real-looking
+        title. (AWS CDK is a tool for setting up cloud services with code, but any decision would do.)
+      </p>
       <pre><code># ADR-0007: Use AWS CDK for new platform stacks
 
 ## Status
@@ -98,24 +110,34 @@ What we chose, in one or two sentences.
 ## Consequences
 What gets easier, what gets harder, what we must watch.</code></pre>
 
+      <p>
+        The status shows where a record is in its life. <em>Proposed</em> means we're still
+        discussing it. <em>Accepted</em> means we build on it. <em>Superseded</em> means a newer
+        record has replaced it.
+      </p>
+
       <div class="note">
         <span class="note-label">Tip</span>
-        <p>Keep the records next to the code, for example in <code>docs/adr/</code>. Then a new decision gets reviewed in the same pull request as the change it explains.</p>
+        <p>Keep the records in the same place as the code, for example in a folder called <code>docs/adr/</code>. Then a new decision gets reviewed in the same pull request as the change it explains. (A pull request is a proposed change that teammates read and approve before it goes in.)</p>
       </div>
 
       <h2>What makes a good ADR</h2>
       <ul>
         <li><strong>One decision per record.</strong> If it needs two headings, it's two ADRs.</li>
-        <li><strong>Options you rejected.</strong> These are often the most valuable part.</li>
-        <li><strong>Honest consequences.</strong> Every choice has a cost; write it down.</li>
-        <li><strong>Immutable once accepted.</strong> Supersede it with a new ADR instead of editing history.</li>
+        <li><strong>The options you said no to.</strong> These are often the most valuable part. They show the next person what was already considered.</li>
+        <li><strong>Honest consequences.</strong> Every choice has a cost. Write it down.</li>
+        <li><strong>No edits once accepted.</strong> If the decision changes, write a new ADR that replaces the old one. Like a ship's log, you add a new entry; you don't tear out old pages.</li>
       </ul>
 
       <h2>What it changed for us</h2>
       <p>
-        In architecture groups I've been part of, ADRs gave us a shared place to discuss trade-offs
-        before building, and a quick answer for every new team member who asks "why is it
-        like this?". The time spent writing them is small compared with the meetings they save.
+        In the architecture groups I've been part of, ADRs gave us a shared place to talk through
+        trade-offs before building anything. A trade-off is what you give up to get something
+        else, like picking a cheaper option that is slower.
+      </p>
+      <p>
+        They also gave a quick answer to every new team member who asked, "Why is it like this?"
+        Writing them takes a little time. That time is small compared with the meetings they save.
       </p>
 
       <blockquote>If a decision is worth arguing about, it's worth writing down.</blockquote>
