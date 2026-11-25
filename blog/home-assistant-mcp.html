@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>From a Raspberry Pi to an AI agent: how I connected my home with MCP · Hemanth Kolli</title>
-  <meta name="description" content="How a tip from my brother led to Home Assistant on a tiny Raspberry Pi computer, and then to a small tool that lets an AI assistant help run my home.">
+  <meta name="description" content="How a tip from my brother led to Home Assistant on a Raspberry Pi, and then to a small tool that lets an AI assistant help run my home.">
   <link rel="canonical" href="https://hemanthkolli.com/blog/home-assistant-mcp.html">
   <meta property="og:type" content="article">
   <meta property="og:title" content="From a Raspberry Pi to an AI agent: how I connected my home with MCP">
@@ -41,7 +41,7 @@
     <article class="article">
       <a class="back" href="./">← All notes</a>
       <h1 style="margin-top:20px">From a Raspberry Pi to an AI agent: how I connected my home with MCP</h1>
-      <p class="meta"><time datetime="2026-11-23">23 Nov 2026</time> · 7 min read · #mcp #homeassistant #aiagents #typescript #smarthome</p>
+      <p class="meta"><time datetime="2026-11-23">23 Nov 2026</time> · 4 min read · #mcp #homeassistant #aiagents #typescript #smarthome</p>
 
       <figure class="ill">
         <div class="ill-panel">
@@ -84,48 +84,33 @@
         <figcaption>One small computer, one open-source platform, every device in one place.</figcaption>
       </figure>
 
-      <p>It started with a tip from my brother: <strong>Home Assistant</strong>. It's free, open-source software (its code is public, and anyone can use and improve it). It brings all your smart devices together in one place, whatever brand they are.</p>
+      <p>It started with a tip from my brother: <strong>Home Assistant</strong>, free software that brings all your smart devices into one app, whatever the brand. No more five apps for one home.</p>
 
-      <p>That tip solved a real problem. Smart devices from different brands usually each come with their own app. The hubs that bring them together are often paid, or only work with some brands. So you end up with several apps to run one home. That makes life harder, not easier. Home Assistant costs nothing and works across brands.</p>
-
-      <p>I was curious and had a Raspberry Pi (a cheap computer about the size of a credit card), so I gave it a try.</p>
-
-      <p>This is the story of how that small experiment grew into something I now use every week. An <strong>AI agent</strong> (an AI assistant that can take actions for you, not only answer questions) now helps me understand and manage my home. It does that through <strong>MCP</strong>, the Model Context Protocol. I'll explain both below.</p>
+      <p>I had a spare Raspberry Pi (a tiny, cheap computer), so I tried it. That small experiment grew into something I now use every week: an <strong>AI agent</strong> that helps run my home, connected through <strong>MCP</strong>.</p>
 
       <div class="note note-key">
         <span class="note-label">In short</span>
         <ul>
-          <li>Home Assistant on a Raspberry Pi brings all my devices into one free app.</li>
-          <li>A small MCP server (a helper program of about 600 lines of TypeScript code) lets an AI agent read and manage it.</li>
-          <li>It's off by default, my secret access key stays on my own computer, and every change waits for my yes.</li>
+          <li>Home Assistant on a Raspberry Pi puts all my devices in one free app.</li>
+          <li>A small MCP server I wrote lets an AI agent read and manage it.</li>
+          <li>It's off by default, my key stays on my computer, and every change waits for my yes.</li>
         </ul>
       </div>
 
       <h2>Step 1: Home Assistant on a Raspberry Pi</h2>
-      <p>The first version was simple. I installed Home Assistant on the Raspberry Pi and added my devices one by one. After a while I had dashboards (screens that show my devices at a glance) and a few automations (rules like "when this happens, do that"). I also had a lot of devices with names like <code>light.living_room_2</code>.</p>
+      <p>I installed Home Assistant on the Pi and added my devices one by one. Soon I had dashboards, a few automations ("when this happens, do that") and lots of devices with names like <code>light.living_room_2</code>.</p>
 
-      <p>It worked well, and it still runs on that same Pi today. But managing it still meant clicking through screens. Automations had to be written in YAML, a strict text format for settings. And I had to keep device names and rooms tidy by hand. That last part I kept postponing.</p>
+      <p>It still runs on that same Pi. But managing it meant clicking through screens, writing settings files and tidying names by hand. That last job I kept putting off.</p>
 
-      <h2>Step 2: Asking "what if I could just ask?"</h2>
-      <p>At the same time, I was learning more about AI agents in my free time. The question came naturally:</p>
-
+      <h2>Step 2: "What if I could just ask?"</h2>
       <blockquote>What if I could just ask <em>"Create a dashboard for me"</em> and have it done?</blockquote>
+      <p>That's what MCP makes possible. In fact, it was one of the first things I asked, and the agent built the dashboard once I approved it.</p>
 
-      <p>That is exactly the problem MCP solves. And yes: one of the first things I later asked the agent was exactly that. It built the dashboard for me after I approved the change.</p>
+      <h2>What is MCP?</h2>
+      <p>The <strong>Model Context Protocol</strong> is an open standard for connecting AI agents to apps. Think of a restaurant menu: the app lists what it can do (its <em>tools</em>), the agent reads the menu and orders, and the kitchen does the cooking. Write the menu once, as an <strong>MCP server</strong>, and any MCP-capable agent can use it.</p>
 
-      <h2>What is MCP, in plain words</h2>
-      <p>The <strong>Model Context Protocol</strong> is an open standard: a shared set of rules, free for anyone to use, for connecting AI agents to apps and data. An app describes what it can do as a list of <em>tools</em>. Each tool has a name, a short description and the details it needs to do its job. Any agent that speaks MCP can read this list and use the tools that fit what you asked for.</p>
-
-      <p>Think of a restaurant menu. The agent reads the menu and orders. The kitchen does the cooking, and the agent never walks into the kitchen. Because every MCP agent reads the same kind of menu, you only write it once. You build one <strong>MCP server</strong> (a program that offers the menu of tools), and every agent that speaks MCP can use it.</p>
-
-      <h2>Step 3: Building a small MCP server for Home Assistant</h2>
-      <p>I built a small MCP server in <strong>TypeScript</strong>, a popular programming language. I used the official MCP SDK, a ready-made toolkit for building MCP servers. The server is around 600 lines of code. It talks to Home Assistant through two of its APIs (the doors Home Assistant opens for other programs to talk to it):</p>
-      <ul>
-        <li>the <strong>REST API</strong>, for what each device is doing right now (its state), for commands (Home Assistant calls these services), and for history</li>
-        <li>the <strong>WebSocket API</strong>, a connection that stays open, for settings such as the lists (registries) of devices, entities and areas. An entity is one single thing Home Assistant tracks, like one light. An area is usually a room.</li>
-      </ul>
-
-      <p>It gives the agent <strong>20 tools</strong>, grouped roughly like this:</p>
+      <h2>Step 3: A small MCP server for Home Assistant</h2>
+      <p>I wrote one in <strong>TypeScript</strong> with the official MCP toolkit, about 600 lines. It talks to Home Assistant's own interfaces and gives the agent <strong>20 tools</strong>:</p>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Area</th><th>What the agent can do</th></tr></thead>
@@ -140,7 +125,7 @@
         </table>
       </div>
 
-      <p>The agent never talks to Home Assistant directly. It only sees these tools and their descriptions. The MCP server does the actual talking to Home Assistant.</p>
+      <p>The agent never touches Home Assistant directly. It only sees the tools; the server does the real work.</p>
 
       <figure class="ill">
         <div class="ill-panel ill-scroll">
@@ -174,7 +159,7 @@
       </figure>
 
       <h2>A real example: heating</h2>
-      <p>Heating is where this helps me most. My rooms have their own smart thermostats. Managing them used to mean opening each one, checking temperatures and adjusting schedules by hand.</p>
+      <p>Each room has its own smart thermostat. Checking and adjusting them used to be a chore.</p>
 
       <figure class="ill">
         <div class="ill-panel">
@@ -202,57 +187,47 @@
         <figcaption>Plain questions, clear answers: one target temperature, and how a room really behaved.</figcaption>
       </figure>
 
-      <p>Now I can ask:</p>
+      <p>Now I just ask:</p>
       <ul>
-        <li><em>"What's the temperature in each room right now?"</em> The agent reads the thermostats and sensors and gives me one overview.</li>
-        <li><em>"How warm was the bedroom over the last day?"</em> It looks at the history, so I can see if a room heats up too slowly or too much.</li>
-        <li><em>"Set the office to 21 °C."</em> It sends the right heating command to that thermostat.</li>
-        <li><em>"Turn the heating off automatically when the heating season ends."</em> It writes the automation for me and shows it to me. It only saves it after I approve.</li>
-        <li><em>"Build me a heating dashboard."</em> All rooms, temperatures and target settings on one screen.</li>
+        <li><em>"What's the temperature in each room?"</em> One overview.</li>
+        <li><em>"How warm was the bedroom over the last day?"</em> It checks the history.</li>
+        <li><em>"Set the office to 21 °C."</em> Done.</li>
+        <li><em>"Turn the heating off when the season ends."</em> It writes the rule, shows it, and saves it only after I approve.</li>
+        <li><em>"Build me a heating dashboard."</em> All rooms on one screen.</li>
       </ul>
-
-      <p>What I like most is that I describe <em>what</em> I want in plain words. The agent figures out <em>which</em> devices, commands and automation rules that means. I still decide, because every change waits for my yes.</p>
+      <p>I say <em>what</em> I want; the agent works out <em>how</em>. I still decide.</p>
 
       <h2>Security, kept simple</h2>
-      <p>Giving an agent access to your home deserves some care. I kept it simple:</p>
       <ul>
-        <li><strong>Off by default.</strong> A small script (a short program I run with one command) switches the MCP server on for a few hours. Then it turns it off again automatically. When I'm not using it, the agent has no access at all.</li>
-        <li><strong>The token stays local.</strong> Home Assistant gives me an access token: a long secret key that works like a password. It lives in a file on my own computer. It never goes into a chat or a prompt (the message I type to the agent).</li>
-        <li><strong>I stay in the loop.</strong> The agent always asks for my approval before it changes anything, so I can say yes or no.</li>
+        <li><strong>Off by default.</strong> A small script turns the server on for a few hours, then off again.</li>
+        <li><strong>The key stays local.</strong> My Home Assistant access key lives in a file on my computer, never in a chat.</li>
+        <li><strong>I stay in the loop.</strong> The agent asks before it changes anything.</li>
       </ul>
 
-      <p>None of this is complicated, but it makes a big difference to how comfortable I feel using it.</p>
-
       <h2>What I learned</h2>
-      <p><strong>The MCP part was the easy part.</strong> The SDK toolkit takes care of most of the MCP rules for me. The real effort went into writing clear tool names and descriptions, so the agent picks the right tool the first time.</p>
-
-      <p><strong>Good error messages matter.</strong> When a tool fails, the agent reads the error message. A clear message such as <em>"this entity has its own area, so its name can't be cleared"</em> lets it correct itself instead of guessing.</p>
-
-      <p><strong>Boring jobs become easy.</strong> Renaming devices and sorting them into the right rooms, the job I had postponed for months, became a single conversation.</p>
-
-      <p><strong>Small is fine.</strong> You don't need a big project to learn MCP. One small server for something you use every day teaches you most of the ideas.</p>
-
-      <h2>Want to try it yourself?</h2>
-      <p>The code is open source, so you can use it and change it for your own home: <strong><a href="https://github.com/Hemanthkolli/home-assistant-agent-mcp">Hemanthkolli/home-assistant-agent-mcp</a></strong>. It uses the MIT licence, which lets you use, copy and change it freely, as long as you keep the licence note.</p>
-
-      <p>You also don't have to start from my code. A few other good starting points:</p>
       <ul>
-        <li><strong>No code:</strong> Home Assistant now has a built-in <a href="https://www.home-assistant.io/integrations/mcp_server/">MCP Server integration</a>: you add it from the Home Assistant settings, no coding needed.</li>
-        <li><strong>Python:</strong> <a href="https://gofastmcp.com">FastMCP</a> lets you define a tool in a few lines.</li>
-        <li><strong>TypeScript:</strong> the <a href="https://github.com/modelcontextprotocol/typescript-sdk">official TypeScript SDK</a>, which is what I used.</li>
-        <li><strong>Python, official:</strong> the <a href="https://github.com/modelcontextprotocol/python-sdk">official Python SDK</a>.</li>
-        <li><strong>Testing:</strong> the <a href="https://github.com/modelcontextprotocol/inspector">MCP Inspector</a> lets you try your tools before you connect an agent.</li>
+        <li><strong>MCP was the easy part.</strong> The real work was writing clear tool names and descriptions.</li>
+        <li><strong>Good error messages matter.</strong> A clear error lets the agent fix itself instead of guessing.</li>
+        <li><strong>Boring jobs become easy.</strong> Renaming and sorting devices, put off for months, took one conversation.</li>
+        <li><strong>Small is fine.</strong> One small server for something you use daily teaches you most of it.</li>
+      </ul>
+
+      <h2>Want to try it?</h2>
+      <p>My code is open source (MIT licence): <strong><a href="https://github.com/Hemanthkolli/home-assistant-agent-mcp">Hemanthkolli/home-assistant-agent-mcp</a></strong>. Other good starting points:</p>
+      <ul>
+        <li><strong>No code:</strong> Home Assistant's built-in <a href="https://www.home-assistant.io/integrations/mcp_server/">MCP Server integration</a>.</li>
+        <li><strong>Python:</strong> <a href="https://gofastmcp.com">FastMCP</a>, or the <a href="https://github.com/modelcontextprotocol/python-sdk">official Python SDK</a>.</li>
+        <li><strong>TypeScript:</strong> the <a href="https://github.com/modelcontextprotocol/typescript-sdk">official TypeScript SDK</a>, which I used.</li>
+        <li><strong>Testing:</strong> the <a href="https://github.com/modelcontextprotocol/inspector">MCP Inspector</a>.</li>
       </ul>
 
       <div class="note">
         <span class="note-label">Tip</span>
-        <p>Start read-only. Give the agent only the tools that read your home first, and add the ones that change things once you trust how it behaves.</p>
+        <p>Start read-only. Add the tools that change things once you trust how the agent behaves.</p>
       </div>
 
       <h2>Closing thought</h2>
-      <p>What started with a tip from my brother and a spare Raspberry Pi became my favourite way to learn how AI agents and the apps they connect to work together. I'm still learning, and I'm sure there are better ways to do parts of this.</p>
-
-      <p>If you've connected your own home or tools to an agent, I'd love to hear how you did it.</p>
+      <p>A tip from my brother and a spare Raspberry Pi became my favourite way to learn about AI agents. I'm still learning. If you've connected your home to an agent, I'd love to hear how.</p>
 
       <p><em>P.S. Yes, an AI helped me write this. The ideas and the project are mine, the agent did the typing. 🤖</em></p>
     </article>
